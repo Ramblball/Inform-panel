@@ -12,13 +12,15 @@ class View {
     }
 
     setUp() {
+        this._setUpButtons();
+    }
+
+    _setUpButtons() {
         document.getElementById("btn").onclick = this.message;
     }
 
-
-
     message() {
-        console.log("message")
+        console.log("message");
     }
 }
 
@@ -27,5 +29,4 @@ class Controller {
     constructor() {
     }
 
-    
 }
