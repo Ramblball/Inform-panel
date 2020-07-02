@@ -12,15 +12,7 @@ class View {
     }
 
     setUp() {
-        this._setUpButtons();
-    }
 
-    _setUpButtons() {
-        document.getElementById("btn").onclick = this.message;
-    }
-
-    message() {
-        console.log("message");
     }
 }
 
@@ -29,4 +21,15 @@ class Controller {
     constructor() {
     }
 
+}
+
+class Model {
+
+    constructor() {
+    }
+
+    _getAlbums() {
+        //    http request will be here
+        return [];
+    }
 }
