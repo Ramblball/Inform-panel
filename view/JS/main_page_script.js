@@ -33,6 +33,9 @@ class View {
 
     _createAlbumDom(albumInfo) {
         let albumDiv = document.createElement("div");
+        albumDiv.setAttribute("id", albumInfo._id);
+        albumDiv.setAttribute("class", "album");
+
     }
 }
 
@@ -116,5 +119,12 @@ class PageLoadError extends TVWebError {
     constructor(message) {
         super(message);
         this.name = "PageLoadError";
+    }
+}
+
+class RequestError extends TVWebError {
+    constructor(message) {
+        super(message);
+        this.name = "RequestError";
     }
 }
