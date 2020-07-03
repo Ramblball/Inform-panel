@@ -4,11 +4,9 @@
   "private": true,
   "description": "Local-web information system",
   "scripts": {
-    "start": "NODE_ENV=dev node ./bin/www",
-    "test": "mocha --timeout 5000"
+    "start": "node ./bin/www"
   },
   "dependencies": {
-    "config": "^3.3.1",
     "connect-flash": "^0.1.1",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
@@ -20,10 +18,5 @@
     "morgan": "~1.9.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0"
-  },
-  "devDependencies": {
-    "chai": "^4.2.0",
-    "chai-http": "^4.3.0",
-    "mocha": "^8.0.1"
   }
 }

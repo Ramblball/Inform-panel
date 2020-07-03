@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('../packages/mongoose');
 const Schema = mongoose.Schema;
 
 const videoSchema = new Schema({
