@@ -32,7 +32,7 @@ class View {
     }
 
     _createAlbumDom(albumInfo) {
-
+        let albumDiv = document.createElement("div");
     }
 }
 
