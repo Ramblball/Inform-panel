@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const passport = require('../packages/passport');
 const User = require('../models/user');
-const { route } = require('.');
 
 router.post('/auth', (req, res, next) => {
 	const data = req.body;
@@ -27,3 +26,5 @@ router.get('/logout', (req, res) => {
 	req.logOut();
 	res.redirect('/');
 })
+
+module.exports = router;
