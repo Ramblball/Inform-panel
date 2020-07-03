@@ -1,4 +1,4 @@
-const mongoose = require('../packages/mongoose');
+const mongoose = require('mongoose');
 const crypto = require('crypto');
 const Schema = mongoose.Schema;
 

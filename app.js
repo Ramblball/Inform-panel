@@ -3,12 +3,10 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const createError = require('http-errors');
-const path = require('path');
-const fs = require('fs');
+const config = require('config');
+const mongoose = require('mongoose');
 
 const passport = require('./packages/passport');
-
-const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json')));
 
 const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
@@ -18,15 +16,20 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(morgan('dev'));
+if (config.util.getEnv('NODE_ENV') !== 'test')
+  app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({
-  secret: config.cookieSecret,
+  secret: config.get('cookieSecret'),
   saveUninitialized: false,
   resave: false,
 }));
+
+mongoose.connect(config.get('dbHost'), config.get('dbOptions'));
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
 
 app.use(passport.initialize());
 app.use(passport.session());
