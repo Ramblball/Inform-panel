@@ -6,15 +6,16 @@ const subImage = require('./image');
 const subVideo = require('./video');
 
 const userSchema = new Schema({
-    status: { type: Boolean, default: false },
+    status: { type: Boolean, default: false, required: true },
+    login: { type: String, required: true },
     name: {
-        first: { type: String },
-        last: { type: String },
-        patronomic: { type: String }
+        first: { type: String, required: true },
+        last: { type: String, required: true },
+        patronomic: { type: String, required: true }
     },
 
-    hash: { type: String },
-    salt: { type: String },
+    hash: { type: String, required: true },
+    salt: { type: String, required: true },
 
     image: [subImage],
     video: [subVideo]
