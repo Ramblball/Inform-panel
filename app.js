@@ -10,6 +10,7 @@ const passport = require('./packages/passport');
 
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json')));
 
+const authRouter = require('./routes/auth');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
@@ -39,8 +40,8 @@ app.use((req, res, next) => {
 	next()
 });
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/', authRouter);
+app.use('/user', usersRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
