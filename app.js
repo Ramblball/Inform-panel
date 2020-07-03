@@ -6,6 +6,8 @@ const createError = require('http-errors');
 const path = require('path');
 const fs = require('fs');
 
+const passport = require('./packages/passport');
+
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json')));
 
 const indexRouter = require('./routes/index');
@@ -25,6 +27,9 @@ app.use(session({
   saveUninitialized: false,
   resave: false,
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use((req, res, next) => {
 	res.setHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
