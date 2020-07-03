@@ -11,7 +11,6 @@ const passport = require('./packages/passport');
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json')));
 
 const authRouter = require('./routes/auth');
-const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
 const app = express();
