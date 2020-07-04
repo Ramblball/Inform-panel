@@ -65,4 +65,4 @@ typings/
 
 # project configurations
 package-lock.json
-config.json
+config/
