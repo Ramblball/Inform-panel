@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const createError = require('http-errors');
 const config = require('config');
 const mongoose = require('mongoose');
+const session = require('express-session');
 
 const passport = require('./packages/passport');
 
@@ -57,7 +58,7 @@ app.use((err, req, res, next) => {
   // res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-  res.sendStatus(err.status || 500);
+  res.status(err.status || 500).send(err.message);
   // res.render('error');
 });
 
