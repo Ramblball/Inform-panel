@@ -16,9 +16,10 @@ class View {
     }
 
     setUp() {
-        console.debug("Loading the page and setting up elements...");
+        console.log("Loading the page and setting up elements...");
         this._setUpButtons();
-        console.debug("The page and all its elements" +
+        this._setAlbums();
+        console.log("The page and all its elements" +
             "were successfully loaded!");
     }
 
@@ -29,13 +30,23 @@ class View {
 
     _setAlbums() {
         let albums = this._controller.Albums;
+        let albumGrid = document.createElement("div");
+        albumGrid.setAttribute("class", "album-grid");
+        albums.forEach(albumInfo => {
+            let albumDiv = this._createAlbumDom(albumInfo);
+            albumGrid.appendChild(albumDiv);
+        });
+        document.body.appendChild(albumGrid);
     }
 
     _createAlbumDom(albumInfo) {
         let albumDiv = document.createElement("div");
         albumDiv.setAttribute("id", albumInfo._id);
         albumDiv.setAttribute("class", "album");
-
+        let albumText = document.createElement("p");
+        albumText.textContent = albumInfo._id;
+        albumDiv.appendChild(albumText);
+        return albumDiv;
     }
 }
 
@@ -62,6 +73,7 @@ class Model {
     }
 
     get Albums() {
+        this._updateAlbums();
         return this._albums;
     }
 
@@ -94,7 +106,7 @@ class RequestsToServer {
 
     static fetchAlbumsRequest() {
         //    http fetch getAlbums request will be here
-        return ['Album 1'];
+        return [{"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'}, {"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'}, {"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'}, {"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'}, {"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'}, {"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'}];
     }
 
     static fetchAlbumContentRequest() {
