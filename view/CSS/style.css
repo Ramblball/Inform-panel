@@ -48,6 +48,29 @@ button {
     text-align: center;
 }
 
+.btn {
+    color: black;
+    text-align: center;
+    padding: 8px;
+    text-decoration: none;
+    font-size: 18px;
+    /* line-height: 25px; */
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    background-color: inherit;
+}
+
+.btn.lg {
+    font-size: 24px;
+    padding: 12px;
+    /*line-height: 25px;*/
+}
+
+.btn:hover {
+    background-color: #ddd;
+}
+
 @media screen and (max-width: 900px) {
     .album-grid {
         grid-gap: .5%;

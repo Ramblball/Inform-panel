@@ -106,7 +106,11 @@ class RequestsToServer {
 
     static fetchAlbumsRequest() {
         //    http fetch getAlbums request will be here
-        return [{"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'}, {"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'}, {"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'}, {"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'}, {"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'}, {"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'}];
+        return [{"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'}, {"_id": 'Album 1'},
+            {"_id": 'Album 2'}, {"_id": 'Album 3'}, {"_id": 'Album 1'}, {"_id": 'Album 2'},
+            {"_id": 'Album 3'}, {"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'},
+            {"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'}, {"_id": 'Album 1'},
+            {"_id": 'Album 2'}, {"_id": 'Album 3'}];
     }
 
     static fetchAlbumContentRequest() {
