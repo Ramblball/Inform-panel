@@ -14,8 +14,7 @@ const usersRouter = require('./routes/users');
 
 const app = express();
 
-app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/static', express.static(path.join(__dirname, 'view')));
 
 if (config.util.getEnv('NODE_ENV') !== 'test')
   app.use(morgan('dev'));
