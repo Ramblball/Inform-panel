@@ -1,14 +1,13 @@
 "use strict"
 
-// document.addEventListener("DOMContentLoaded", () => {
-    var view = new View();
+document.addEventListener("DOMContentLoaded", () => {
+    let view = new View();
     try {
         view.setUp();
     } catch (e) {
         throw new PageLoadError(e.message);
     }
-
-// });
+});
 
 class View {
 
@@ -16,7 +15,7 @@ class View {
         this._controller = new Controller();
         this._currentSection = 0;
         this._sectionsList = {
-            0: this._openAlbumSection
+            0: () => this._openAlbumSection()
         }
     }
 
@@ -77,14 +76,13 @@ class View {
     _openAlbumSection() {
         this._setAlbums();
         this._currentSection = 0;
-        console.debug("Showing albums...")
     }
 
     _switchSection(section) {
         if (!(section in this._sectionsList))
             throw new UnexpectedError(`Key ${section} not found`);
-        // if (section === this._currentSection)
-        //     return;
+        if (section === this._currentSection)
+            return;
         this._closeAllSections();
         this._sectionsList[section]();
     }
