@@ -1,6 +1,6 @@
-"use strict"
+'use strict'
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
     let view = new View();
     try {
         view.setUp();
@@ -15,35 +15,45 @@ class View {
         this._controller = new Controller();
         this._currentSection = 0;
         this._sectionsList = {
-            0: () => this._openAlbumSection()
+            0: () => {
+                this._setAlbums();
+                this._currentSection = 0;
+            },
+            1: () => {
+                this._currentSection = 1;
+            }
         }
     }
 
     setUp() {
-        console.log("Loading the page and setting up elements...");
+        console.log('Loading the page and setting up elements...');
         this._setUpButtons();
         this._setAlbums();
         this._setSectionListButtons();
-        console.log("The page and all its elements " +
+        console.log('The page and all its elements ' +
             "were successfully loaded!");
     }
 
     _setUpButtons() {
-        document.getElementById("logOutBtn").onclick =
+        document.getElementById('logOutBtn').onclick =
             RequestsToServer.logOutRequest;
-        document.getElementById("helpBtn").onclick = () =>
-            console.debug("Help");
+        document.getElementById('helpBtn').onclick = () =>
+            console.debug('Help');
     }
 
     _setAlbums() {
         let albums = this._controller.Albums;
-        let albumGrid = document.createElement("div");
-        albumGrid.setAttribute("class", "album-grid");
+        let albumGrid = document.createElement('div');
+        albumGrid.setAttribute('class', 'album-grid');
         albums.forEach(albumInfo => {
             let albumDiv = this._createAlbumDom(albumInfo);
             albumGrid.appendChild(albumDiv);
         });
-        document.querySelector(".container").appendChild(albumGrid);
+        document.querySelector('.container').appendChild(albumGrid);
+    }
+
+    _setTexts() {
+        let texts = this._controller
     }
 
     _setSectionListButtons() {
@@ -56,26 +66,21 @@ class View {
     }
 
     _createAlbumDom(albumInfo) {
-        let albumDiv = document.createElement("div");
-        albumDiv.setAttribute("id", albumInfo._id);
-        albumDiv.setAttribute("class", "album");
-        let albumText = document.createElement("p");
+        let albumDiv = document.createElement('div');
+        albumDiv.setAttribute('id', albumInfo._id);
+        albumDiv.setAttribute('class', 'album');
+        let albumText = document.createElement('p');
         albumText.textContent = albumInfo._id;
         albumDiv.appendChild(albumText);
         return albumDiv;
     }
 
     _closeAllSections() {
-        let container = document.querySelector(".container");
+        let container = document.querySelector('.container');
         if (container.children.length < 2)
-            throw new UnexpectedError("Less then two children in " +
+            throw new UnexpectedError('Less then two children in ' +
                 "container, omg!");
         container.removeChild(container.lastElementChild);
-    }
-
-    _openAlbumSection() {
-        this._setAlbums();
-        this._currentSection = 0;
     }
 
     _switchSection(section) {
@@ -96,6 +101,10 @@ class Controller {
 
     get Albums() {
         return this._model.Albums;
+    }
+
+    get Texts() {
+        return this._model.Texts;
     }
 
 }
@@ -128,6 +137,7 @@ class Model {
     }
 
     get Texts() {
+        this._updateTexts();
         return this._albumContent;
     }
 
@@ -139,16 +149,18 @@ class Model {
 class RequestsToServer {
     static logOutRequest() {
         // http fetch logout request will be here
+        const request = async () => {
+            const response = await fetch('some_api', {
+                method: 'POST'
+            });
+            return response.json();
+        }
         console.debug("Logging out...");
     }
 
     static fetchAlbumsRequest() {
         //    http fetch getAlbums request will be here
-        return [{"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'}, {"_id": 'Album 1'},
-            {"_id": 'Album 2'}, {"_id": 'Album 3'}, {"_id": 'Album 1'}, {"_id": 'Album 2'},
-            {"_id": 'Album 3'}, {"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'},
-            {"_id": 'Album 1'}, {"_id": 'Album 2'}, {"_id": 'Album 3'}, {"_id": 'Album 1'},
-            {"_id": 'Album 2'}, {"_id": 'Album 3'}];
+        return [{'_id': 'Album 1'}];
     }
 
     static fetchAlbumContentRequest() {
@@ -172,20 +184,20 @@ class TVWebError extends Error {
 class PageLoadError extends TVWebError {
     constructor(message) {
         super(message);
-        this.name = "PageLoadError";
+        this.name = 'PageLoadError';
     }
 }
 
 class RequestError extends TVWebError {
     constructor(message) {
         super(message);
-        this.name = "RequestError";
+        this.name = 'RequestError';
     }
 }
 
 class UnexpectedError extends TVWebError {
     constructor(message) {
         super(message);
-        this.name = "UnexpectedError";
+        this.name = 'UnexpectedError';
     }
 }

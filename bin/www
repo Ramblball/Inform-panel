@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-process.env.NODE_ENV = 'front';
+process.env.NODE_ENV = 'dev';
 
 /**
  * Module dependencies.

@@ -28,11 +28,11 @@ app.use(session({
   resave: false,
 }));
 
-if (config.util.getEnv('NODE_ENV') !== 'front') {
-    mongoose.connect(config.get('dbHost'), config.get('dbOptions'));
-    const db = mongoose.connection;
-    db.on('error', console.error.bind(console, 'connection error:'));
-}
+// if (config.util.getEnv('NODE_ENV') !== 'dev') {
+//     mongoose.connect(config.get('dbHost'), config.get('dbOptions'));
+//     const db = mongoose.connection;
+//     db.on('error', console.error.bind(console, 'connection error:'));
+// }
 
 app.use(passport.initialize());
 app.use(passport.session());
