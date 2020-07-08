@@ -1,31 +1,39 @@
 "use strict"
 
-document.addEventListener("DOMContentLoaded", () => {
-    let view = new View();
+// document.addEventListener("DOMContentLoaded", () => {
+    var view = new View();
     try {
         view.setUp();
     } catch (e) {
         throw new PageLoadError(e.message);
     }
-});
+
+// });
 
 class View {
 
     constructor() {
         this._controller = new Controller();
+        this._currentSection = 0;
+        this._sectionsList = {
+            0: this._openAlbumSection
+        }
     }
 
     setUp() {
         console.log("Loading the page and setting up elements...");
         this._setUpButtons();
         this._setAlbums();
-        console.log("The page and all its elements" +
+        this._setSectionListButtons();
+        console.log("The page and all its elements " +
             "were successfully loaded!");
     }
 
     _setUpButtons() {
-        document.getElementById("logOutBtn").onclick = RequestsToServer.logOutRequest;
-        document.getElementById("helpBtn").onclick = () => console.debug("Help");
+        document.getElementById("logOutBtn").onclick =
+            RequestsToServer.logOutRequest;
+        document.getElementById("helpBtn").onclick = () =>
+            console.debug("Help");
     }
 
     _setAlbums() {
@@ -39,6 +47,15 @@ class View {
         document.querySelector(".container").appendChild(albumGrid);
     }
 
+    _setSectionListButtons() {
+        for (let i = 0; i < 2; i++) {
+            let num = i;
+            document.getElementById(`section-${i}`).onclick = () => {
+                this._switchSection(num);
+            }
+        }
+    }
+
     _createAlbumDom(albumInfo) {
         let albumDiv = document.createElement("div");
         albumDiv.setAttribute("id", albumInfo._id);
@@ -47,6 +64,29 @@ class View {
         albumText.textContent = albumInfo._id;
         albumDiv.appendChild(albumText);
         return albumDiv;
+    }
+
+    _closeAllSections() {
+        let container = document.querySelector(".container");
+        if (container.children.length < 2)
+            throw new UnexpectedError("Less then two children in " +
+                "container, omg!");
+        container.removeChild(container.lastElementChild);
+    }
+
+    _openAlbumSection() {
+        this._setAlbums();
+        this._currentSection = 0;
+        console.debug("Showing albums...")
+    }
+
+    _switchSection(section) {
+        if (!(section in this._sectionsList))
+            throw new UnexpectedError(`Key ${section} not found`);
+        // if (section === this._currentSection)
+        //     return;
+        this._closeAllSections();
+        this._sectionsList[section]();
     }
 }
 
@@ -142,5 +182,12 @@ class RequestError extends TVWebError {
     constructor(message) {
         super(message);
         this.name = "RequestError";
+    }
+}
+
+class UnexpectedError extends TVWebError {
+    constructor(message) {
+        super(message);
+        this.name = "UnexpectedError";
     }
 }

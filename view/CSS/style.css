@@ -54,6 +54,11 @@ button {
     text-align: center;
 }
 
+.section-list {
+    display: block;
+    margin: 30px 20px;
+}
+
 .btn {
     color: black;
     text-align: center;
