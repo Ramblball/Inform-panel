@@ -6,9 +6,9 @@ const userSchema = new Schema({
     status: { type: Boolean, default: false, required: true },
     login: { type: String, required: true },
     name: {
-        first: { type: String, required: true },
-        last: { type: String, required: true },
-        patronomic: { type: String, required: false }
+        first: { type: String, required: true, maxlength: 32 },
+        last: { type: String, required: true, maxlength: 32 },
+        patronomic: { type: String, required: false, maxlength: 32 }
     },
 
     hash: { type: String, required: true },
@@ -16,7 +16,9 @@ const userSchema = new Schema({
 });
 
 userSchema.virtual('fullName').get(function () {
-    return `${this.name.first} ${this.name.last} ${this.name.patronomic === undefined ? '' : this.name.patronomic}`;
+    return this.name.patronomic === undefined
+        ? `${this.name.first} ${this.name.last}`
+        : `${this.name.first} ${this.name.last} ${this.name.patronomic}`
 });
 
 userSchema.methods.setPassword = function (password) {
