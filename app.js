@@ -3,6 +3,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const createError = require('http-errors');
+const session = require('express-session');
 const config = require('config');
 const mongoose = require('mongoose');
 const session = require('express-session');
