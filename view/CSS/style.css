@@ -33,9 +33,15 @@ button {
     float: right;
 }
 
+.container {
+    display: grid;
+    grid-template-columns: 20% 80%;
+}
+
+
 .album-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     grid-gap: 10% .5%;
     padding: .5%;
 }
@@ -54,7 +60,6 @@ button {
     padding: 8px;
     text-decoration: none;
     font-size: 18px;
-    /* line-height: 25px; */
     border-radius: 4px;
     cursor: pointer;
     border: none;
@@ -64,7 +69,6 @@ button {
 .btn.lg {
     font-size: 24px;
     padding: 12px;
-    /*line-height: 25px;*/
 }
 
 .btn:hover {

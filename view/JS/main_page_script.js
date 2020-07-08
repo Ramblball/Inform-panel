@@ -4,8 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let view = new View();
     try {
         view.setUp();
-    } catch {
-        throw new PageLoadError("Some problems occurred while loading the page...");
+    } catch (e) {
+        throw new PageLoadError(e.message);
     }
 });
 
@@ -36,7 +36,7 @@ class View {
             let albumDiv = this._createAlbumDom(albumInfo);
             albumGrid.appendChild(albumDiv);
         });
-        document.body.appendChild(albumGrid);
+        document.querySelector(".container").appendChild(albumGrid);
     }
 
     _createAlbumDom(albumInfo) {
