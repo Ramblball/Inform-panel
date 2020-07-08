@@ -11,15 +11,15 @@ router.post('/auth', (req, res, next) => {
 	user.setPassword(pass);
 
 	user.save(err => {
-		if (err === undefined)
-			next();
+		if (err)
+			res.status(400).json(err.errors);
 		else
-			res.status(400).json(error.errors);
+			res.sendStatus(200);
 	})
 });
 
 router.post('/login', passport.authorize('local', {
-	successRedirect: '/user',
+	successRedirect: '/user'
 }));
 
 router.get('/logout', (req, res) => {
