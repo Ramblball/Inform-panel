@@ -6,10 +6,13 @@ const textSchema = new Schema({
 
     text: { type: String, maxlength: 512, required: false },
 
-    time: {
-        start: { type: Number, required: true },
-        end: { type: Number, required: true }
-    }
+    created: { type: Number, required: true },
+    end: { type: Number, required: true }
+});
+
+textSchema.pre('save', next => {
+    this.created = Date.now();
+    next();
 });
 
 module.exports = mongoose.model('text', textSchema, 'text');
