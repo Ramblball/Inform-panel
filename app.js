@@ -10,8 +10,7 @@ const session = require('express-session');
 
 const passport = require('./packages/passport');
 
-const authRouter = require('./routes/auth');
-const usersRouter = require('./routes/users');
+const router = require('./routes/router');
 
 const app = express();
 
@@ -40,8 +39,7 @@ app.use((req, res, next) => {
 	next()
 });
 
-app.use('/', authRouter);
-app.use('/user', usersRouter);
+app.use('/', router);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
