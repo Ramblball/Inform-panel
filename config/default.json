@@ -1,7 +1,11 @@
 {
-    "cookieSecret": "school39",
     "dbOptions": {
         "useNewUrlParser": true,
         "useUnifiedTopology": true
+    },
+    "cookie": {
+        "secret": "school39",
+        "saveUninitialized": false,
+        "resave": false
     }
 }
