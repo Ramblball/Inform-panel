@@ -1,11 +1,12 @@
 'use strict'
+import * as errors from '/static/JS/errors.js'
 
 document.addEventListener('DOMContentLoaded', () => {
     let view = new View();
     try {
         view.setUp();
     } catch (e) {
-        throw new PageLoadError(e.message);
+        throw new errors.PageLoadError(e.message);
     }
 });
 
@@ -78,14 +79,14 @@ class View {
     _closeAllSections() {
         let container = document.querySelector('.container');
         if (container.children.length < 2)
-            throw new UnexpectedError('Less then two children in ' +
+            throw new errors.UnexpectedError('Less then two children in ' +
                 "container, omg!");
         container.removeChild(container.lastElementChild);
     }
 
     _switchSection(section) {
         if (!(section in this._sectionsList))
-            throw new UnexpectedError(`Key ${section} not found`);
+            throw new errors.UnexpectedError(`Key ${section} not found`);
         if (section === this._currentSection)
             return;
         this._closeAllSections();
@@ -171,33 +172,5 @@ class RequestsToServer {
     static fetchTextsRequests() {
         //    http fetch getTexts request will be here
         return ['Text 1'];
-    }
-}
-
-class TVWebError extends Error {
-
-    constructor(message) {
-        super(message);
-    }
-}
-
-class PageLoadError extends TVWebError {
-    constructor(message) {
-        super(message);
-        this.name = 'PageLoadError';
-    }
-}
-
-class RequestError extends TVWebError {
-    constructor(message) {
-        super(message);
-        this.name = 'RequestError';
-    }
-}
-
-class UnexpectedError extends TVWebError {
-    constructor(message) {
-        super(message);
-        this.name = 'UnexpectedError';
     }
 }
