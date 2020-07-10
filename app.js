@@ -27,6 +27,9 @@ app.use(session({
     resave: false,
 }));
 
+// mongoose.connect(config.get('dbHost'), config.get('dbOptions'));
+// const db = mongoose.connection;
+// db.on('error', console.error.bind(console, 'connection error:'));
 
 app.use(passport.initialize());
 app.use(passport.session());
