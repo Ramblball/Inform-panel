@@ -6,7 +6,6 @@ const createError = require('http-errors');
 const session = require('express-session');
 const config = require('config');
 const mongoose = require('mongoose');
-const session = require('express-session');
 
 const passport = require('./packages/passport');
 
