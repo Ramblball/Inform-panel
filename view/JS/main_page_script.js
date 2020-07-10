@@ -1,12 +1,14 @@
 'use strict'
 import * as errors from '/static/JS/errors.js'
+import { PageLoadError } from './errors';
 
 document.addEventListener('DOMContentLoaded', () => {
     let view = new View();
     try {
         view.setUp();
     } catch (e) {
-        throw new errors.PageLoadError(e.message);
+        if (e instanceof PageLoadError)
+            throw new errors.PageLoadError(e.message);
     }
 });
 
@@ -154,8 +156,17 @@ class RequestsToServer {
             const response = await fetch('some_api', {
                 method: 'POST'
             });
-            return response.json();
+            if (response.ok)
+                return response.json();
+            else
+                throw new errors.RequestError(`${response.status}`)
         }
+        try {
+            
+        } catch (error) {
+            
+        }
+        request();
         console.debug("Logging out...");
     }
 
