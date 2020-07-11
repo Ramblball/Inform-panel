@@ -22,9 +22,9 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(session(config.get('cookie')));
 
-// mongoose.connect(config.get('dbHost'), config.get('dbOptions'));
-// const db = mongoose.connection;
-// db.on('error', console.error.bind(console, 'connection error:'));
+mongoose.connect(config.get('dbHost'), config.get('dbOptions'));
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
 
 app.use(passport.initialize());
 app.use(passport.session());

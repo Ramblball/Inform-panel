@@ -1,14 +1,20 @@
 'use strict'
 import * as errors from '/static/JS/errors.js'
-import { PageLoadError } from './errors';
 
 document.addEventListener('DOMContentLoaded', () => {
+    let album = {
+        name: 'albumName',
+        comment: 'albumComment',
+        hide: false,
+        end: new Date().getTime()
+    };
+    console.log(RequestsToServer.createNewAlbumRequest(album));
     let view = new View();
     try {
         view.setUp();
     } catch (e) {
-        if (e instanceof PageLoadError)
-            throw new errors.PageLoadError(e.message);
+        if (e)
+            throw new Error(e.message);
     }
 });
 
@@ -46,13 +52,14 @@ class View {
 
     _setAlbums() {
         let albums = this._controller.Albums;
-        let albumGrid = document.createElement('div');
-        albumGrid.setAttribute('class', 'album-grid');
-        albums.forEach(albumInfo => {
-            let albumDiv = this._createAlbumDom(albumInfo);
-            albumGrid.appendChild(albumDiv);
-        });
-        document.querySelector('.container').appendChild(albumGrid);
+        console.log(albums);
+        // let albumGrid = document.createElement('div');
+        // albumGrid.setAttribute('class', 'album-grid');
+        // albums.forEach(albumInfo => {
+        // let albumDiv = this._createAlbumDom(albumInfo);
+        // albumGrid.appendChild(albumDiv);
+        // });
+        // document.querySelector('.container').appendChild(albumGrid);
     }
 
     _setTexts() {
@@ -162,17 +169,42 @@ class RequestsToServer {
                 throw new errors.RequestError(`${response.status}`)
         }
         try {
-            
+
         } catch (error) {
-            
+
         }
         request();
         console.debug("Logging out...");
     }
 
     static fetchAlbumsRequest() {
-        //    http fetch getAlbums request will be here
-        return [{'_id': 'Album 1'}];
+        const request = async () => {
+            const response = await fetch('/album', {
+                method: 'GET'
+            });
+            if (!(response.ok))
+                console.error(response.status);
+            else {
+                const json = await response.json();
+                console.log(json);
+            }
+        }
+        const getReq = async () => {
+            return await request();
+        }
+        return getReq();
+    }
+
+    static createNewAlbumRequest(albumBody) {
+        const request = async (body) => {
+            const response = await fetch('/album/create', {
+                method: 'POST',
+                body: body
+            });
+            if (!(response.ok))
+                console.error(response.status);
+        }
+        return request(albumBody);
     }
 
     static fetchAlbumContentRequest() {
