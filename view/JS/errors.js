@@ -26,4 +26,7 @@ class UnexpectedError extends TVWebError {
     }
 }
 
+class StupidError extends TVWebError {
+}
+
 export {UnexpectedError, PageLoadError, RequestError}
