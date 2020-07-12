@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
         hide: false,
         end: new Date().getTime()
     };
-    console.log(RequestsToServer.createNewAlbumRequest(album));
     let view = new View();
     try {
         view.setUp();
@@ -100,6 +99,22 @@ class View {
             return;
         this._closeAllSections();
         this._sectionsList[section]();
+    }
+
+    _createBasicDropdown(id, anchorCounts) {
+        let dropdownDom = document.createElement('div');
+        dropdownDom.setAttribute('class', 'dropdown');
+        dropdownDom.setAttribute('id', id);
+        for (let i = 0; i < anchorCounts; i++) {
+            let anchorDom = document.createElement('a');
+            dropdownDom.appendChild(anchorDom);
+        }
+        return dropdownDom;
+    }
+
+    _setUpCreationDropdown() {
+        let dropdownDom = this._createBasicDropdown('createDropdown', 2);
+        
     }
 }
 
