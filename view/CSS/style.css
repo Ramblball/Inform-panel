@@ -12,13 +12,12 @@ body, html {
 
 .header {
     padding: 1%;
-    background-color: #7bdbff;
     overflow: hidden;
+    background-color: #f1f1f1;;
 }
 
 .header > button {
     margin-right: .5%;
-    border: none;
     padding: .2% .5%;
     font-size: 16px;
     text-align: center;
@@ -32,3 +31,67 @@ button {
     float: right;
 }
 
+.container {
+    display: grid;
+    grid-template-columns: 20% 80%;
+    margin-top: .5%;
+}
+
+
+.album-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-gap: 10% .5%;
+    padding: .5%;
+}
+
+.album {
+    box-shadow: 1px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    padding: .2% .5%;
+    font-size: 24px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.section-list {
+    display: block;
+    margin: 30px 20px;
+}
+
+.btn {
+    color: black;
+    text-align: center;
+    padding: 8px;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    background-color: inherit;
+}
+
+.btn.lg {
+    font-size: 24px;
+    padding: 12px;
+}
+
+.btn.danger:hover {
+    background-color: #e30000;
+}
+
+.btn.info:hover {
+    background-color: #006edb;
+    color: white;
+}
+
+.btn:hover {
+    background-color: #ddd;
+}
+
+
+@media screen and (max-width: 900px) {
+    .album-grid {
+        grid-gap: .5%;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+}
