@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const passport = require('../packages/passport');
+const path = require('path');
 const User = require('../models/user');
 
 router.post('/auth', (req, res, next) => {
@@ -18,9 +19,16 @@ router.post('/auth', (req, res, next) => {
 	})
 });
 
-router.post('/login', passport.authorize('local', {
+router.get('/login', (req, res, next) => {
+	res.status(200).sendFile(path.join(__dirname, '..', 'view', 'HTML', 'login.html'));
+  });
+
+router.post('/login', (req, res, next) => {
+	console.log(req.body)
+	next();
+}), passport.authorize('local', {
 	successRedirect: '/user'
-}));
+});
 
 router.get('/logout', (req, res) => {
 	req.logOut();

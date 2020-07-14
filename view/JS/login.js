@@ -9,7 +9,7 @@ function LogIn() {
     fetch('/login', {
         method: 'POST',
         body: {
-            'username': user, 'password': pass
+            'login': user, 'password': pass
         }
     })
         .then(res => window.location.href = '/')
