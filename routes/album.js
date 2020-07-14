@@ -18,7 +18,7 @@ router.post('/create', (req, res, next) => {
     const album = new Album(data);
 
     album.save(err => {
-        if (err === null)
+        if (err !== null)
             next(err.errors);
         next();
     });
