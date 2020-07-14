@@ -1,8 +1,20 @@
 'use strict'
-
+import * as errors from '/static/JS/errors.js'
 
 document.addEventListener('DOMContentLoaded', () => {
-
+    let album = {
+        name: 'albumName',
+        comment: 'albumComment',
+        hide: false,
+        end: new Date().getTime()
+    };
+    let view = new View();
+    try {
+        view.setUp();
+    } catch (e) {
+        if (e)
+            throw new Error(e.message);
+    }
 });
 
 class View {
@@ -39,20 +51,18 @@ class View {
 
     _setAlbums() {
         let albums = this._controller.Albums;
-        if (albums.length == 0)
-            return
-        let albumGrid = document.createElement('div');
-        albumGrid.setAttribute('class', 'album-grid');
-        albums.forEach(albumInfo => {
-            let albumDiv = this._createAlbumDom(albumInfo);
-            albumGrid.appendChild(albumDiv);
-        });
-        document.querySelector('.container').appendChild(albumGrid);
-        let fileInput = docment.createElement('input');
-        fileInput.setAttribute('id', 'fileInput');
-        fileInput.style.display = 'none';
-        fileInput.onclick = () => { console.log('Открывается модальное окно для добавления файла в альбом') } // TODO: Надо как-то брать id альбома при нажатии, замыкание
-        document.querySelector('.container').appendChild(fileInput);
+        console.log(albums);
+        // let albumGrid = document.createElement('div');
+        // albumGrid.setAttribute('class', 'album-grid');
+        // albums.forEach(albumInfo => {
+        // let albumDiv = this._createAlbumDom(albumInfo);
+        // albumGrid.appendChild(albumDiv);
+        // });
+        // document.querySelector('.container').appendChild(albumGrid);
+    }
+
+    _setTexts() {
+        let texts = this._controller
     }
 
     _setSectionListButtons() {
@@ -104,24 +114,9 @@ class View {
 
     _setUpCreationDropdown() {
         let dropdownDom = this._createBasicDropdown('createDropdown', 2);
-        dropdownDom.childNodes[0].textContent = 'Альбом';
-        dropdownDom.childNodes[0].onclick = () => { console.log('Тут типо открыается модалка для создания альбома') };
-        dropdownDom.childNodes[1].textContent = 'Объявление';
-        dropdownDom.childNodes[1].onclick = () => { console.log('Тут типо открыается модалка для создания объявления') };
-    }
-
-    _createBasicModalWindow(title) {
-        let modalDom = document.getElementById('div');
-        modalDom.setAttribute('class', 'modal default');
-        let modalContent = document.createElement('div');
-        modalContent.setAttribute('class', 'modal-content');
-        let modalTitle = document.createElement('div');
-        modalTitle.setAttribute('class', 'modal-title');
-        modalTitle.textContent = title;
-        modalContent.appendChild(modalTitle);
+        
     }
 }
-
 
 class Controller {
 
@@ -139,7 +134,6 @@ class Controller {
 
 }
 
-
 class Model {
 
     constructor() {
@@ -156,36 +150,85 @@ class Model {
     }
 
     _updateAlbums() {
-        this._albums = this.makeFetchGetRequest('/album');
+        this._albums = RequestsToServer.fetchAlbumsRequest();
     }
 
-    CreateNewAlbum(albumInfo) {
-        this.makeFetchPostRequest('/album/create', albumInfo);
+    get AlbumContent() {
+        return this._albumContent;
     }
 
-    makeFetchPostRequest(url, data, waitForResponse = false) {
-        const request = async(url, data, waitForResponse) => {
-            let response = await fetch(url, {
-                    method: 'POST',
-                    body: JSON.stringify(data),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .catch(er => { throw er });
+    _updateAlbumContent() {
+        this._albums = RequestsToServer.fetchAlbumContentRequest();
+    }
 
-            if (waitForResponse)
-                return await response.json();
+    get Texts() {
+        this._updateTexts();
+        return this._albumContent;
+    }
+
+    _updateTexts() {
+        this._texts = RequestsToServer.fetchTextsRequests();
+    }
+}
+
+class RequestsToServer {
+    static logOutRequest() {
+        // http fetch logout request will be here
+        const request = async () => {
+            const response = await fetch('some_api', {
+                method: 'POST'
+            });
+            if (response.ok)
+                return response.json();
+            else
+                throw new errors.RequestError(`${response.status}`)
         }
-        return request(url, data, waitForResponse);
+        try {
+
+        } catch (error) {
+
+        }
+        request();
+        console.debug("Logging out...");
     }
 
-    makeFetchGetRequest(url) {
-        const request = async(url) => {
-            let response = await fetch(url)
-                .catch(er => { throw er });
-            return await response.json();
+    static fetchAlbumsRequest() {
+        const request = async () => {
+            const response = await fetch('/album', {
+                method: 'GET'
+            });
+            if (!(response.ok))
+                console.error(response.status);
+            else {
+                const json = await response.json();
+                console.log(json);
+            }
         }
-        return request(url);
+        const getReq = async () => {
+            return await request();
+        }
+        return getReq();
+    }
+
+    static createNewAlbumRequest(albumBody) {
+        const request = async (body) => {
+            const response = await fetch('/album/create', {
+                method: 'POST',
+                body: body
+            });
+            if (!(response.ok))
+                console.error(response.status);
+        }
+        return request(albumBody);
+    }
+
+    static fetchAlbumContentRequest() {
+        //    http fetch getAlbumContent request will be here
+        return ['Content 1'];
+    }
+
+    static fetchTextsRequests() {
+        //    http fetch getTexts request will be here
+        return ['Text 1'];
     }
 }
