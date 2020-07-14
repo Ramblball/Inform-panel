@@ -20,19 +20,17 @@ router.post('/auth', (req, res, next) => {
 });
 
 router.get('/login', (req, res, next) => {
+	console.log(req.isAuthenticated());
 	res.status(200).sendFile(path.join(__dirname, '..', 'view', 'HTML', 'login.html'));
   });
 
-router.post('/login', (req, res, next) => {
-	console.log(req.body)
-	next();
-}), passport.authorize('local', {
-	successRedirect: '/user'
-});
+router.post('/login', passport.authenticate('local', {
+	successRedirect: '/'
+}));
 
 router.get('/logout', (req, res) => {
 	req.logOut();
 	res.redirect('/');
-})
+});
 
 module.exports = router;

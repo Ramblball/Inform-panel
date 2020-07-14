@@ -8,9 +8,12 @@ function LogIn() {
     let pass = document.getElementById("userPassword").value;
     fetch('/login', {
         method: 'POST',
-        body: {
-            'login': user, 'password': pass
-        }
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            login: user, password: pass
+        })
     })
         .then(res => window.location.href = '/')
         .catch(er => console.error(er));

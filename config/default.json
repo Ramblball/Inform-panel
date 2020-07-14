@@ -3,9 +3,12 @@
         "useNewUrlParser": true,
         "useUnifiedTopology": true
     },
-    "cookie": {
+    "session": {
         "secret": "school39",
         "saveUninitialized": false,
-        "resave": false
+        "resave": false,
+        "cookie": {
+            "maxAge": 900000
+        }
     }
 }

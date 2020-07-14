@@ -21,7 +21,7 @@ if (config.util.getEnv('NODE_ENV') !== 'test')
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
-app.use(session(config.get('cookie')));
+app.use(session(config.get('session')));
 
 mongoose.connect(config.get('dbHost'), config.get('dbOptions'));
 const db = mongoose.connection;
