@@ -2,7 +2,7 @@ const router = require('express').Router();
 const Text = require('../models/text');
 
 const textSender = (req, res, next) => {
-    Text.find({ user: req.user }, 'text end', (err, texts) => {
+    Text.find({ user: req.user._id }, 'text end', (err, texts) => {
         if (err !== null)
             next(err);
         res.status(200).send(texts);
@@ -12,7 +12,9 @@ const textSender = (req, res, next) => {
 router.get('/', textSender);
 
 router.post('/create', (req, res, next) => {
-    const text = new Text(req.body);
+    const data = req.body;
+    data.user = req.user._id;
+    const text = new Text(data);
 
     text.save(err => {
         if (err !== null)

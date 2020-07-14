@@ -3,7 +3,7 @@ const router = require('express').Router();
 const Album = require('../models/album');
 
 const sendAlbums = (req, res, next) => {
-    Album.find({ user: req.user }, 'name comment hide end', (err, albums) => {
+    Album.find({ user: req.user._id }, 'name comment hide end', (err, albums) => {
         if (err === null)
             res.send(albums);
         else
@@ -15,6 +15,7 @@ router.get('/', sendAlbums);
 
 router.post('/create', (req, res, next) => {
     const data = req.body;
+    data.user = req.user._id;
     const album = new Album(data);
 
     album.save(err => {
