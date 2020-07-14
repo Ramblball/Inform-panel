@@ -16,12 +16,5 @@ const albumSchema = new Schema({
     file: [subFile]
 }, { versionKey: false });
 
-albumSchema.pre('save', next => {
-    this.time = {
-        start: Date.now(),
-        end: this.time
-    }
-    next();
-});
 
 module.exports = mongoose.model('album', albumSchema, 'album');
