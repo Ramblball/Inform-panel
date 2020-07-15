@@ -2,7 +2,8 @@
 
 
 document.addEventListener('DOMContentLoaded', () => {
-
+    let view = new View();
+    view.setUp();
 });
 
 class View {
@@ -31,8 +32,9 @@ class View {
     }
 
     _setUpButtons() {
-        document.getElementById('logOutBtn').onclick =
-            RequestsToServer.logOutRequest;
+        document.getElementById('logOutBtn').onclick = () => {
+            RequestsToServer.makeFetchGetRequest('/logout');
+        }
         document.getElementById('helpBtn').onclick = () =>
             console.debug('Help');
     }
@@ -69,8 +71,14 @@ class View {
         albumDiv.setAttribute('id', albumInfo._id);
         albumDiv.setAttribute('class', 'album');
         let albumText = document.createElement('p');
-        albumText.textContent = albumInfo._id;
+        albumText.textContent = albumInfo.name;
         albumDiv.appendChild(albumText);
+        let albumDrop = this._createAlbumDropdown(albumInfo);
+        albumDiv.appendChild(albumDrop);
+        albumDiv.oncontextmenu = (e) => {
+            e.preventDefault();
+            this._openDropdown(e, albumDrop.id);
+        };
         return albumDiv;
     }
 
@@ -110,6 +118,11 @@ class View {
         dropdownDom.childNodes[1].onclick = () => { console.log('Тут типо открыается модалка для создания объявления') };
     }
 
+    _createAlbumDropdown(album) {
+        let dropdownDom = this._createBasicDropdown(`${album._id}_drop`, 6);
+
+    }
+
     _createBasicModalWindow(title) {
         let modalDom = document.getElementById('div');
         modalDom.setAttribute('class', 'modal default');
@@ -119,6 +132,20 @@ class View {
         modalTitle.setAttribute('class', 'modal-title');
         modalTitle.textContent = title;
         modalContent.appendChild(modalTitle);
+    }
+
+    _openDropdown(event, dropdownId) {
+        this._closeAllDropdowns();
+        document.getElementById(dropdownId).style.display = 'block';
+        document.getElementById(dropdownID).style.left = event.pageX + "px";
+        document.getElementById(dropdownID).style.top = event.pageY + "px";
+    }
+
+    _closeAllDropdowns() {
+        document.querySelectorAll(".dropdown")
+            .forEach(dropdown => {
+                dropdown.style.display = "none";
+            });
     }
 }
 
@@ -156,22 +183,24 @@ class Model {
     }
 
     _updateAlbums() {
-        this._albums = this.makeFetchGetRequest('/album');
+        this._albums = RequestsToServer.makeFetchGetRequest('/album');
     }
 
     CreateNewAlbum(albumInfo) {
-        this.makeFetchPostRequest('/album/create', albumInfo);
+        RequestsToServer.makeFetchPostRequest('/album/create', albumInfo);
     }
+}
 
-    makeFetchPostRequest(url, data, waitForResponse = false) {
-        const request = async(url, data, waitForResponse) => {
+class RequestsToServer {
+    static makeFetchPostRequest(url, data, waitForResponse = false) {
+        const request = async (url, data, waitForResponse) => {
             let response = await fetch(url, {
-                    method: 'POST',
-                    body: JSON.stringify(data),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
                 .catch(er => { throw er });
 
             if (waitForResponse)
@@ -180,8 +209,8 @@ class Model {
         return request(url, data, waitForResponse);
     }
 
-    makeFetchGetRequest(url) {
-        const request = async(url) => {
+    static makeFetchGetRequest(url) {
+        const request = async (url) => {
             let response = await fetch(url)
                 .catch(er => { throw er });
             return await response.json();
