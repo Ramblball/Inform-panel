@@ -1,11 +1,13 @@
 const router = require('express').Router();
+const createError = require('http-errors');
 const Text = require('../models/text');
 
 const textSender = (req, res, next) => {
     Text.find({ user: req.user._id }, 'text end', (err, texts) => {
         if (err !== null)
-            next(err);
-        res.status(200).send(texts);
+            next(createError(500, err));
+        else
+            res.status(200).send(texts);
     });
 }
 
@@ -19,7 +21,7 @@ router.post('/create', (req, res, next) => {
 
     text.save(err => {
         if (err !== null)
-            next(err.errors);
+            next(createError(400, err.errors));
         else
             next();
     });
@@ -31,8 +33,9 @@ router.put('/update', (req, res, next) => {
             next(err);
         Object.assign(text, req.body).save(err => {
             if (err !== null)
-                next(err.errors);
-            next();
+                next(createError(400, err.errors));
+            else
+                next();
         });
     });
 }, textSender);
@@ -40,8 +43,9 @@ router.put('/update', (req, res, next) => {
 router.delete('/remove', (req, res, next) => {
     Text.deleteOne({ '_id': req.params.id }, err => {
         if (err !== null)
-            next(err);
-        next();
+            next(createError(500, err));
+        else
+            next();
     });
 }, textSender);
 

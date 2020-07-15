@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const createError = require('http-errors');
 
 const Album = require('../models/album');
 
@@ -7,7 +8,7 @@ const sendAlbums = (req, res, next) => {
         if (err === null)
             res.send(albums);
         else
-            next(err);
+            next(createError(500, err));
     });
 }
 
@@ -21,8 +22,8 @@ router.post('/create', (req, res, next) => {
 
     album.save(err => {
         if (err !== null)
-            next(err.errors);
-        else 
+            next(createError(400, err.errors));
+        else
             next();
     });
 }, sendAlbums);
@@ -30,10 +31,10 @@ router.post('/create', (req, res, next) => {
 router.put('/update', (req, res, next) => {
     Album.findById({ _id: req.params.id }, (err, album) => {
         if (err !== null)
-            next(err);
+            next(createError(500, err));
         Object.assign(album.toObject(), req.body).save(err => {
             if (err !== null)
-                next(err.errors);
+                next(createError(400, err.errors));
             next();
         });
     });
@@ -42,8 +43,9 @@ router.put('/update', (req, res, next) => {
 router.delete('/remove', (req, res, next) => {
     Album.deleteOne({ '_id': req.params.id }, err => {
         if (err !== null)
-            next(err);
-        next();
+            next(createError(500, err));
+        else
+            next();
     });
 }, sendAlbums);
 
