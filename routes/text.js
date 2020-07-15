@@ -14,12 +14,14 @@ router.get('/', textSender);
 router.post('/create', (req, res, next) => {
     const data = req.body;
     data.user = req.user._id;
+    data.created = Date.now();
     const text = new Text(data);
 
     text.save(err => {
         if (err !== null)
             next(err.errors);
-        next();
+        else
+            next();
     });
 }, textSender);
 

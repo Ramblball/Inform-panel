@@ -16,12 +16,14 @@ router.get('/', sendAlbums);
 router.post('/create', (req, res, next) => {
     const data = req.body;
     data.user = req.user._id;
+    data.created = Date.now();
     const album = new Album(data);
 
     album.save(err => {
         if (err !== null)
             next(err.errors);
-        next();
+        else 
+            next();
     });
 }, sendAlbums);
 

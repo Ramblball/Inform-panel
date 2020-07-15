@@ -2,7 +2,8 @@
     box-sizing: border-box;
 }
 
-body, html {
+body,
+html {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
     width: 100%;
@@ -13,10 +14,11 @@ body, html {
 .header {
     padding: 1%;
     overflow: hidden;
-    background-color: #f1f1f1;;
+    background-color: #f1f1f1;
+    ;
 }
 
-.header > button {
+.header>button {
     margin-right: .5%;
     padding: .2% .5%;
     font-size: 16px;
@@ -36,7 +38,6 @@ button {
     grid-template-columns: 20% 80%;
     margin-top: .5%;
 }
-
 
 .album-grid {
     display: grid;
@@ -88,6 +89,32 @@ button {
     background-color: #ddd;
 }
 
+.dropdown {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    padding: 10px 12px;
+    z-index: 1;
+}
+
+.dropdown>a {
+    color: dodgerblue;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.dropdown>a.disabled {
+    color: black;
+}
+
+.dropdown a:hover {
+    background-color: #ddd
+}
 
 @media screen and (max-width: 900px) {
     .album-grid {

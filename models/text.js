@@ -10,9 +10,4 @@ const textSchema = new Schema({
     end: { type: Number, required: true }
 });
 
-textSchema.pre('save', next => {
-    this.created = Date.now();
-    next();
-});
-
 module.exports = mongoose.model('text', textSchema, 'text');
