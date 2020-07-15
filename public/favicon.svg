@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #111;
+      }
+
+      .cls-2 {
+        fill: #fff;
+      }
+
+      .cls-3 {
+        fill: #67c8ee;
+      }
+
+      .cls-4 {
+        fill: #3473a4;
+      }
+
+      .cls-5 {
+        fill: #003c56;
+        fill-rule: evenodd;
+      }
+    </style>
+  </defs>
+  <rect id="Прямоугольник_скругл._углы_1" data-name="Прямоугольник, скругл. углы 1" class="cls-1" x="61" y="104" width="378" height="256" rx="10" ry="10"/>
+  <rect id="Прямоугольник_3" data-name="Прямоугольник 3" class="cls-1" x="162" y="383" width="168" height="13"/>
+  <rect id="Прямоугольник_1" data-name="Прямоугольник 1" class="cls-2" x="76" y="121" width="348" height="215"/>
+  <rect id="Прямоугольник_2" data-name="Прямоугольник 2" class="cls-1" x="229" y="360" width="33" height="28"/>
+  <rect id="Прямоугольник_4" data-name="Прямоугольник 4" class="cls-3" x="91" y="144" width="309" height="94"/>
+  <rect id="Прямоугольник_5" data-name="Прямоугольник 5" class="cls-4" x="91" y="250" width="309" height="17"/>
+  <path id="Прямоугольник_6" data-name="Прямоугольник 6" class="cls-5" d="M91,281H375v4H91v-4Zm284,0v4M91,281H375v4H91v-4Zm284,0v4M91,281H375v4H91v-4Zm284,0v4M91,281H375v4H91v-4Zm284,0v4M91,281H375v4H91v-4Zm284,0v4M91,281H375v4H91v-4Zm284,0v4"/>
+  <path id="Прямоугольник_6_копия_3" data-name="Прямоугольник 6 копия 3" class="cls-5" d="M91,311H340v4H91v-4Zm249,0v4M91,311H340v4H91v-4Zm249,0v4M91,311H340v4H91v-4Zm249,0v4M91,311H340v4H91v-4Zm249,0v4M91,311H340v4H91v-4Zm249,0v4M91,311H340v4H91v-4Zm249,0v4"/>
+  <path id="Прямоугольник_6_копия" data-name="Прямоугольник 6 копия" class="cls-5" d="M91,291H317v4H91v-4Zm209-10v4M91,281H300v4H91v-4Zm209,0v4M91,281H300v4H91v-4Zm209,0v4M91,281H300v4H91v-4Zm209,0v4M91,281H300v4H91v-4Zm209,0v4M91,281H300v4H91v-4Zm209,0v4"/>
+  <path id="Прямоугольник_6_копия_2" data-name="Прямоугольник 6 копия 2" class="cls-5" d="M91,301H229v4H91v-4Zm209-20v4M91,281H300v4H91v-4Zm209,0v4M91,281H300v4H91v-4Zm209,0v4M91,281H300v4H91v-4Zm209,0v4M91,281H300v4H91v-4Zm209,0v4M91,281H300v4H91v-4Zm209,0v4"/>
+</svg>
