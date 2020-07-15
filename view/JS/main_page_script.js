@@ -123,15 +123,17 @@ class View {
 
     }
 
-    _createBasicModalWindow(title) {
+    _createBasicModalWindow() {
         let modalDom = document.getElementById('div');
-        modalDom.setAttribute('class', 'modal default');
+        modalDom.setAttribute('class', 'modal');
         let modalContent = document.createElement('div');
         modalContent.setAttribute('class', 'modal-content');
-        let modalTitle = document.createElement('div');
-        modalTitle.setAttribute('class', 'modal-title');
-        modalTitle.textContent = title;
-        modalContent.appendChild(modalTitle);
+        modalDom.appendChild(modalContent);
+        return modalDom;
+    }
+
+    _createAlbumCreateModal() {
+        
     }
 
     _openDropdown(event, dropdownId) {
