@@ -11,9 +11,9 @@ function LogIn() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
+        body: {
             login: user, password: pass
-        })
+        }
     })
         .then(res => window.location.href = '/')
         .catch(er => console.error(er));
