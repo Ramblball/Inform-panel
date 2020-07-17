@@ -4,11 +4,6 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     let view = new View();
-    // view._model.createNewAlbum({
-    //     name: 'name',
-    //     comment: 'comment',
-    //     end: 1
-    // })
     view.setUp();
 });
 
@@ -33,6 +28,7 @@ class View {
         this._setUpButtons();
         this._setAlbums();
         this._setSectionListButtons();
+        this._setWindowListener();
         console.log('The page and all its elements ' +
             "were successfully loaded!");
     }
@@ -41,6 +37,17 @@ class View {
         document.getElementById('logOutBtn').onclick = () => {}
         document.getElementById('helpBtn').onclick = () =>
             console.debug('Help');
+    }
+
+    _setWindowListener() {
+        window.addEventListener("click", event => {
+            if (!event.target.matches(".dropdown") && !event.target.matches(".drop-btn")) {
+                this._closeAllDropdowns()
+            }
+            // if (event.target.matches(".modal-overlay")) {
+            //     closeAllModals();
+            // }
+        })
     }
 
     _setAlbums() {
@@ -74,7 +81,6 @@ class View {
     }
 
     _createAlbumDom(albumInfo) {
-        console.log(albumInfo)
         let albumDiv = document.createElement('div');
         albumDiv.setAttribute('id', albumInfo._id);
         albumDiv.setAttribute('class', 'album');
@@ -82,13 +88,11 @@ class View {
         albumText.textContent = albumInfo.name;
         albumDiv.appendChild(albumText);
         let albumDrop = this._createAlbumDropdown(albumInfo);
-        console.log(albumDrop)
         albumDiv.appendChild(albumDrop);
         albumDiv.oncontextmenu = (e) => {
             e.preventDefault();
             this._openDropdown(e, albumDrop.id);
         };
-        console.log(albumDiv)
         return albumDiv;
     }
 
@@ -109,12 +113,16 @@ class View {
         this._sectionsList[section]();
     }
 
-    _createBasicDropdown(id, anchorCounts) {
+    _createBasicDropdown(id, disabledAnchorCounts, anchorCounts) {
         let dropdownDom = document.createElement('div');
         dropdownDom.setAttribute('class', 'dropdown');
         dropdownDom.setAttribute('id', id);
         for (let i = 0; i < anchorCounts; i++) {
             let anchorDom = document.createElement('a');
+            if (i < disabledAnchorCounts)
+                anchorDom.setAttribute('class', 'disabled')
+            if (i == 2)
+                dropdownDom.appendChild(document.createElement('hr'));
             dropdownDom.appendChild(anchorDom);
         }
         return dropdownDom;
@@ -129,7 +137,19 @@ class View {
     }
 
     _createAlbumDropdown(album) {
-        let dropdownDom = this._createBasicDropdown(`${album._id}_drop`, 6);
+        let dropdownDom = this._createBasicDropdown(`${album._id}_drop`, 2, 7);
+        dropdownDom.childNodes[0].textContent = `Название: ${album.name}`;
+        dropdownDom.childNodes[1].textContent = `Комментарий: ${album.comment}`;
+        dropdownDom.childNodes[3].textContent = 'Изменить комментарий';
+        dropdownDom.childNodes[3].onclick = () => { console.log('changing comment') };
+        dropdownDom.childNodes[4].textContent = album.hide ? 'Показать' : 'Скрыть';
+        dropdownDom.childNodes[4].onclick = () => { console.log('Изменяю видимость') };
+        dropdownDom.childNodes[5].textContent = 'Изменить дату удаления';
+        dropdownDom.childNodes[5].onclick = () => { console.log('Изменяю дату удаления') };
+        dropdownDom.childNodes[6].textContent = 'Добавить файл';
+        dropdownDom.childNodes[6].onclick = () => { console.log('Добавляю файл') };
+        dropdownDom.childNodes[7].textContent = 'Удалить';
+        dropdownDom.childNodes[7].onclick = () => { console.log('Удаляю') };
         return dropdownDom
     }
 
@@ -149,8 +169,8 @@ class View {
     _openDropdown(event, dropdownId) {
         this._closeAllDropdowns();
         document.getElementById(dropdownId).style.display = 'block';
-        document.getElementById(dropdownID).style.left = event.pageX + "px";
-        document.getElementById(dropdownID).style.top = event.pageY + "px";
+        document.getElementById(dropdownId).style.left = event.pageX + "px";
+        document.getElementById(dropdownId).style.top = event.pageY + "px";
     }
 
     _closeAllDropdowns() {
@@ -179,6 +199,7 @@ class Model {
         try {
             const res = await fetch('/album/');
             const data = await res.json();
+            this._albums = data;
             return data;
         } catch (er) {
             console.error(er);

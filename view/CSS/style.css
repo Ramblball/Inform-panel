@@ -48,8 +48,7 @@ button {
 
 .album {
     box-shadow: 1px 2px 2px 1px rgba(0, 0, 0, 0.2);
-    padding: .2% .5%;
-    font-size: 24px;
+    font-size: 22px;
     cursor: pointer;
     text-align: center;
 }
@@ -101,15 +100,20 @@ button {
 
 .dropdown>a {
     color: dodgerblue;
-    padding: 12px 16px;
+    padding: 10px 14px;
     text-decoration: none;
     display: block;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 16px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .dropdown>a.disabled {
     color: black;
+    cursor: default;
+    text-align: left;
 }
 
 .dropdown a:hover {
@@ -117,27 +121,26 @@ button {
 }
 
 .modal {
-    display: none; 
-    position: fixed; 
-    z-index: 1; 
-    padding-top: 100px; 
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
     left: 0;
     top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
-    background-color: rgb(0,0,0); 
-    background-color: rgba(0,0,0,0.4); 
-  }
-  
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+}
 
-  .modal-content {
+.modal-content {
     background-color: #fefefe;
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
-  }
+}
 
 @media screen and (max-width: 900px) {
     .album-grid {
