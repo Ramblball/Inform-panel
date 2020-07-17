@@ -6,15 +6,23 @@ document.addEventListener('DOMContentLoaded', () => {
 function LogIn() {
     let user = document.getElementById("userName").value;
     let pass = document.getElementById("userPassword").value;
-    fetch('/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: {
-            login: user, password: pass
-        }
+    console.log({
+        login: user,
+        password: pass
     })
-        .then(res => window.location.href = '/')
+    fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                login: user,
+                password: pass
+            })
+        })
+        .then(res => {
+            window.location.href = '/';
+            console.log(res)
+        })
         .catch(er => console.error(er));
 }

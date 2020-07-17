@@ -1,15 +1,21 @@
 'use strict'
 
 
+
 document.addEventListener('DOMContentLoaded', () => {
     let view = new View();
+    // view._model.createNewAlbum({
+    //     name: 'name',
+    //     comment: 'comment',
+    //     end: 1
+    // })
     view.setUp();
 });
 
 class View {
 
     constructor() {
-        this._controller = new Controller();
+        this._model = new Model();
         this._currentSection = 0;
         this._sectionsList = {
             0: () => {
@@ -32,29 +38,30 @@ class View {
     }
 
     _setUpButtons() {
-        document.getElementById('logOutBtn').onclick = () => {
-            RequestsToServer.makeFetchGetRequest('/logout');
-        }
+        document.getElementById('logOutBtn').onclick = () => {}
         document.getElementById('helpBtn').onclick = () =>
             console.debug('Help');
     }
 
     _setAlbums() {
-        let albums = this._controller.Albums;
-        if (albums.length == 0)
-            return
-        let albumGrid = document.createElement('div');
-        albumGrid.setAttribute('class', 'album-grid');
-        albums.forEach(albumInfo => {
-            let albumDiv = this._createAlbumDom(albumInfo);
-            albumGrid.appendChild(albumDiv);
-        });
-        document.querySelector('.container').appendChild(albumGrid);
-        let fileInput = docment.createElement('input');
-        fileInput.setAttribute('id', 'fileInput');
-        fileInput.style.display = 'none';
-        fileInput.onclick = () => { console.log('Открывается модальное окно для добавления файла в альбом') } // TODO: Надо как-то брать id альбома при нажатии, замыкание
-        document.querySelector('.container').appendChild(fileInput);
+        let albumsPromise = this._model.Albums;
+        albumsPromise.then(albums => {
+            if (albums.length == 0)
+                return
+            let albumGrid = document.createElement('div');
+            albumGrid.setAttribute('class', 'album-grid');
+            albums.forEach(albumInfo => {
+                let albumDiv = this._createAlbumDom(albumInfo);
+                albumGrid.appendChild(albumDiv);
+            });
+            document.querySelector('.container').appendChild(albumGrid);
+            let fileInput = document.createElement('input');
+            fileInput.setAttribute('id', 'fileInput');
+            fileInput.style.display = 'none';
+            fileInput.onclick = () => { console.log('Открывается модальное окно для добавления файла в альбом') } // TODO: Надо как-то брать id альбома при нажатии, замыкание
+            document.querySelector('.container').appendChild(fileInput);
+        })
+
     }
 
     _setSectionListButtons() {
@@ -67,6 +74,7 @@ class View {
     }
 
     _createAlbumDom(albumInfo) {
+        console.log(albumInfo)
         let albumDiv = document.createElement('div');
         albumDiv.setAttribute('id', albumInfo._id);
         albumDiv.setAttribute('class', 'album');
@@ -74,11 +82,13 @@ class View {
         albumText.textContent = albumInfo.name;
         albumDiv.appendChild(albumText);
         let albumDrop = this._createAlbumDropdown(albumInfo);
+        console.log(albumDrop)
         albumDiv.appendChild(albumDrop);
         albumDiv.oncontextmenu = (e) => {
             e.preventDefault();
             this._openDropdown(e, albumDrop.id);
         };
+        console.log(albumDiv)
         return albumDiv;
     }
 
@@ -120,7 +130,7 @@ class View {
 
     _createAlbumDropdown(album) {
         let dropdownDom = this._createBasicDropdown(`${album._id}_drop`, 6);
-
+        return dropdownDom
     }
 
     _createBasicModalWindow() {
@@ -133,7 +143,7 @@ class View {
     }
 
     _createAlbumCreateModal() {
-        
+
     }
 
     _openDropdown(event, dropdownId) {
@@ -151,24 +161,6 @@ class View {
     }
 }
 
-
-class Controller {
-
-    constructor() {
-        this._model = new Model();
-    }
-
-    get Albums() {
-        return this._model.Albums;
-    }
-
-    get Texts() {
-        return this._model.Texts;
-    }
-
-}
-
-
 class Model {
 
     constructor() {
@@ -180,43 +172,28 @@ class Model {
     }
 
     get Albums() {
-        this._updateAlbums();
-        return this._albums;
+        return this.getAlbums();
     }
 
-    _updateAlbums() {
-        this._albums = RequestsToServer.makeFetchGetRequest('/album');
+    async getAlbums() {
+        try {
+            const res = await fetch('/album/');
+            const data = await res.json();
+            return data;
+        } catch (er) {
+            console.error(er);
+        }
     }
 
-    CreateNewAlbum(albumInfo) {
-        RequestsToServer.makeFetchPostRequest('/album/create', albumInfo);
-    }
-}
-
-class RequestsToServer {
-    static makeFetchPostRequest(url, data, waitForResponse = false) {
-        const request = async (url, data, waitForResponse) => {
-            let response = await fetch(url, {
+    createNewAlbum(album) {
+        fetch('/album/create', {
                 method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                body: JSON.stringify(album)
             })
-                .catch(er => { throw er });
-
-            if (waitForResponse)
-                return await response.json();
-        }
-        return request(url, data, waitForResponse);
-    }
-
-    static makeFetchGetRequest(url) {
-        const request = async (url) => {
-            let response = await fetch(url)
-                .catch(er => { throw er });
-            return await response.json();
-        }
-        return request(url);
+            .then(res => console.log(res))
+            .catch(er => {
+                throw er;
+            })
     }
 }
