@@ -61,13 +61,13 @@ class View {
                 let albumDiv = this._createAlbumDom(albumInfo);
                 albumGrid.appendChild(albumDiv);
             });
-            document.querySelector('.container').appendChild(albumGrid);
+            document.getElementById('main').appendChild(albumGrid);
             let fileInput = document.createElement('input');
             fileInput.setAttribute('id', 'fileInput');
             fileInput.style.display = 'none';
             fileInput.onclick = () => { console.log('Открывается модальное окно для добавления файла в альбом') } // TODO: Надо как-то брать id альбома при нажатии, замыкание
-            document.querySelector('.container').appendChild(fileInput);
-        })
+            document.getElementById('main').appendChild(fileInput);
+        });
 
     }
 
@@ -129,11 +129,12 @@ class View {
     }
 
     _setUpCreationDropdown() {
-        let dropdownDom = this._createBasicDropdown('createDropdown', 2);
+        let dropdownDom = this._createBasicDropdown('createDropdown', -1, 2);
         dropdownDom.childNodes[0].textContent = 'Альбом';
-        dropdownDom.childNodes[0].onclick = () => { console.log('Тут типо открыается модалка для создания альбома') };
+        dropdownDom.childNodes[0].onclick = () => { this._openModal('createAlbumModal') };
         dropdownDom.childNodes[1].textContent = 'Объявление';
         dropdownDom.childNodes[1].onclick = () => { console.log('Тут типо открыается модалка для создания объявления') };
+        return dropdownDom();
     }
 
     _createAlbumDropdown(album) {
@@ -163,7 +164,15 @@ class View {
     }
 
     _createAlbumCreateModal() {
-
+        let modal = this._createBasicModalWindow();
+        modal.setAttribute('id', 'createAlbumModal');
+        let nameInput = document.createElement('input');
+        nameInput.setAttribute('type', 'date');
+        let dateInput = document.createElement('input');
+        dateInput.setAttribute('type', 'date');
+        modal.childNodes[0].appendChild(nameInput);
+        modal.childNodes[0].appendChild(dateInput);
+        document.body.appendChild(modal);
     }
 
     _openDropdown(event, dropdownId) {
@@ -178,6 +187,14 @@ class View {
             .forEach(dropdown => {
                 dropdown.style.display = "none";
             });
+    }
+
+    _openModal(modalId) {
+        document.getElementById(modalId).style.display = 'block';
+    }
+
+    _closeAllModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
     }
 }
 

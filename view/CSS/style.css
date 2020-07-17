@@ -33,11 +33,12 @@ button {
     float: right;
 }
 
-.container {
+
+/* .container {
     display: grid;
     grid-template-columns: 20% 80%;
     margin-top: .5%;
-}
+} */
 
 .album-grid {
     display: grid;
@@ -56,6 +57,11 @@ button {
 .section-list {
     display: block;
     margin: 30px 20px;
+}
+
+.section-list>button {
+    margin-top: .5%;
+    display: grid;
 }
 
 .btn {
