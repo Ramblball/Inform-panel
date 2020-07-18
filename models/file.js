@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const fileSchema = new Schema({
-    originalName: { type: String, maxlength: 64, required: true },
     systemName: { type: String, maxlength: 64, required: true },
     type: { type: Boolean, required: true },
 
