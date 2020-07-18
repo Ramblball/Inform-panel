@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const createError = require('http-errors');
 const session = require('express-session');
+const fileUpload = require('express-fileupload');
 const favicon = require('serve-favicon');
 const config = require('config');
 const mongoose = require('mongoose');
@@ -24,6 +25,9 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(session(config.get('session')));
+app.use(fileUpload({
+    createParentPath: true
+}));
 app.use(favicon(path.join(__dirname, 'public', 'favicon.svg')));
 
 mongoose.connect(config.get('dbHost'), config.get('dbOptions'));
