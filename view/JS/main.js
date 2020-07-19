@@ -18,6 +18,37 @@ class Control {
                 .then(res => console.log(res))
                 .catch(er => console.log(er));
         }
+        document.getElementById('createAlbumBtn').onclick = () => {
+
+        }
+    }
+
+    disableButton(buttonId) {
+        document.getElementById(buttonId).setAttribute('disabled', '');
+    }
+
+
+
+    enableButton(buttonId) {
+        document.getElementById(buttonId).removeAttribute('disabled');
+    }
+
+    setInputCheckers() {
+        document.getElementById('newAlbumName').onchange = () => {
+            let albumName = document.getElementById('newAlbumName').value;
+            if (albumName.length == 0)
+                this.disableButton('createAlbumBtn');
+            else
+                this.enableButton('createAlbumBtn');
+        }
+
+        document.getElementById('newAlbumDate').onchange = () => {
+            let albumName = document.getElementById('newAlbumDate').value;
+            if (albumName.length == 0)
+                this.disableButton('createAlbumBtn');
+            else
+                this.enableButton('createAlbumBtn');
+        }
     }
 
     setAlbums() {
