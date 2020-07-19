@@ -6,10 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
 function LogIn() {
     let user = document.getElementById("userName").value;
     let pass = document.getElementById("userPassword").value;
-    console.log({
-        login: user,
-        password: pass
-    })
     fetch('/login', {
             method: 'POST',
             headers: {
@@ -22,7 +18,6 @@ function LogIn() {
         })
         .then(res => {
             window.location.href = '/';
-            console.log(res)
         })
         .catch(er => console.error(er));
 }

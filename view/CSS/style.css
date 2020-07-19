@@ -33,18 +33,19 @@ button {
     float: right;
 }
 
-
-/* .container {
-    display: grid;
-    grid-template-columns: 20% 80%;
+.container {
+    display: flex;
+    /* grid-template-columns: 20% 80%; */
+    flex-direction: row;
     margin-top: .5%;
-} */
+}
 
 .album-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     grid-gap: 10% .5%;
     padding: .5%;
+    flex-grow: 5;
 }
 
 .album {
@@ -55,13 +56,8 @@ button {
 }
 
 .section-list {
-    display: block;
     margin: 30px 20px;
-}
-
-.section-list>button {
-    margin-top: .5%;
-    display: grid;
+    padding: 25px;
 }
 
 .btn {

@@ -61,12 +61,14 @@ class View {
                 let albumDiv = this._createAlbumDom(albumInfo);
                 albumGrid.appendChild(albumDiv);
             });
-            document.getElementById('main').appendChild(albumGrid);
+            let albumColumns = document.createElement('div');
+            albumColumns.appendChild(albumGrid);
+            document.querySelector('.container').appendChild(albumGrid);
             let fileInput = document.createElement('input');
             fileInput.setAttribute('id', 'fileInput');
             fileInput.style.display = 'none';
             fileInput.onclick = () => { console.log('Открывается модальное окно для добавления файла в альбом') } // TODO: Надо как-то брать id альбома при нажатии, замыкание
-            document.getElementById('main').appendChild(fileInput);
+            document.querySelector('.container').appendChild(fileInput);
         });
 
     }
@@ -83,7 +85,7 @@ class View {
     _createAlbumDom(albumInfo) {
         let albumDiv = document.createElement('div');
         albumDiv.setAttribute('id', albumInfo._id);
-        albumDiv.setAttribute('class', 'album');
+        albumDiv.setAttribute('class', 'uk-card uk-card-default');
         let albumText = document.createElement('p');
         albumText.textContent = albumInfo.name;
         albumDiv.appendChild(albumText);
@@ -121,7 +123,7 @@ class View {
             let anchorDom = document.createElement('a');
             if (i < disabledAnchorCounts)
                 anchorDom.setAttribute('class', 'disabled')
-            if (i == 2)
+            if (i == disabledAnchorCounts)
                 dropdownDom.appendChild(document.createElement('hr'));
             dropdownDom.appendChild(anchorDom);
         }
