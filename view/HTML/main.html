@@ -5,26 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/uikit/css/uikit.min.css" />
-
     <script src="/static/uikit/js/uikit.min.js"></script>
     <script src="/static/uikit/js/uikit-icons.min.js"></script>
-
-
-    <title>Document</title>
+    <title>ТВ</title>
 </head>
 
 <body>
     <nav class="uk-navbar-container" uk-navbar>
-        <div class="uk-navbar-left">
+        <div class="uk-navbar-right">
             <ul class="uk-navbar-nav">
                 <li>
-                    <a>Создать</a>
-                    <div class="uk-navbar-dropdown" uk-dropdown="mode: click">
-                        <ul class="uk-nav uk-navbar-dropdown-nav">
-                            <li><a href="#createAlbum" uk-toggle>Альбом <span uk-icon="icon: folder"></span></a>
+                    <a id="logOutBtn">Выход</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="main" class="uk-padding uk-flex uk-flex-middle">
+        <div class=" uk-width-1-6">
+            <ul class="uk-list">
+                <li>
+                    <button class="uk-button uk-button-primary uk-width-1-1">Создать...</button>
+                    <div uk-dropdown="mode: click;  pos: bottom-justify; boundary: .boundary-align; boundary-align: true">
+                        <ul class="uk-nav uk-dropdown-nav">
+                            <li>
+                                <a href="#createAlbum" uk-toggle>Альбом <span uk-icon="icon: folder"></span></a>
                                 <div id="createAlbum" uk-modal>
                                     <div class="uk-modal-dialog uk-margin-auto-vertical uk-modal-body">
-                                        <button class="uk-modal-close-default" type="button" uk-close></button>
+                                        <button class="uk-modal-close-default " type="button" uk-close></button>
                                         <h2 class="uk-modal-title">Создайте новый альбом</h2>
                                         <div class="uk-align-center uk-container-xsmall uk-margin-small-top">
                                             <div class="uk-margin">
@@ -37,28 +45,50 @@
                                                 <input id="newAlbumDate" class="uk-input" type="date">
                                             </div>
 
-                                            <button id="createAlbumBtn"
-                                                class="uk-button uk-button-primary uk-align-right">Созадть</button>
+                                            <button id="createAlbumBtn" class="uk-button uk-button-primary uk-align-right">Создать</button>
                                         </div>
                                     </div>
                                 </div>
                             </li>
-                            <li><a>Объявление <span uk-icon="icon: file-text"></span></a></li>
+                            <li>
+                                <a href="#createText" uk-toggle>Объявление <span uk-icon="icon: file-text "></span></a>
+                                <div id="createText" uk-modal>
+                                    <div class="uk-modal-dialog uk-margin-auto-vertical uk-modal-body">
+                                        <button class="uk-modal-close-default " type="button" uk-close></button>
+                                        <h2 class="uk-modal-title">Создайте новое объявление</h2>
+                                        <div class="uk-align-center uk-container-xsmall uk-margin-small-top">
+                                            <div class="uk-margin">
+                                                <span>Содержимое</span>
+                                                <textarea id="newTextContent" class="uk-textarea" style="resize: none;"></textarea>
+                                            </div>
+
+                                            <div class="uk-margin">
+                                                <span>Дата удаления</span>
+                                                <input id="newTextDate" class="uk-input" type="date">
+                                            </div>
+
+                                            <button id="createTextBtn" class="uk-button uk-button-primary uk-align-right">Созадть</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
                         </ul>
                     </div>
                 </li>
-            </ul>
-        </div>
-        <div class="uk-navbar-right">
-            <ul class="uk-navbar-nav">
                 <li>
-                    <a id="logOutBtn">Выход</a>
+                    <h2 class="uk-heading">Выберите раздел</h2>
                 </li>
+                <li><button class="uk-button uk-button-default uk-width-1-1">Альбомы</button></li>
+                <li><button class="uk-button uk-button-default uk-width-1-1">Объявления</button></li>
             </ul>
         </div>
-    </nav>
+        <div class="uk-width-5-6 uk-margin-left" id="mainField">
 
-    <script src="/static/JS/main.js"></script>
+        </div>
+    </div>
+
+    <script src="/static/JS/main.js "></script>
+
 </body>
 
 </html>
