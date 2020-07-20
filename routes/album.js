@@ -32,7 +32,7 @@ router.put('/update', (req, res, next) => {
     Album.findById({ _id: req.params.id }, (err, album) => {
         if (err !== null)
             next(createError(500, err));
-        Object.assign(album.toObject(), req.body).save(err => {
+        Object.assign(album, req.body).save(err => {
             if (err !== null)
                 next(createError(400, err.errors));
             next();
