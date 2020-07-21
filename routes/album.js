@@ -29,9 +29,11 @@ router.post('/create', (req, res, next) => {
 }, sendAlbums);
 
 router.put('/update', (req, res, next) => {
-    Album.findById({ _id: req.params.id }, (err, album) => {
+    Album.findOne({ _id: req.params.id, user: req.user._id }, (err, album) => {
         if (err !== null)
-            next(createError(500, err));
+            next(err);
+        if (album === undefined)
+            next(createError(404));
         Object.assign(album, req.body).save(err => {
             if (err !== null)
                 next(createError(400, err.errors));
@@ -41,9 +43,11 @@ router.put('/update', (req, res, next) => {
 }, sendAlbums);
 
 router.delete('/remove', (req, res, next) => {
-    Album.deleteOne({ '_id': req.params.id }, err => {
+    Album.deleteOne({ _id: req.params.id, user: req.user._id }, (err, album) => {
         if (err !== null)
-            next(createError(500, err));
+            next(err);
+        else if (album === undefined)
+            next(createError(404));
         else
             next();
     });
