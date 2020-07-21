@@ -3,12 +3,21 @@
         "useNewUrlParser": true,
         "useUnifiedTopology": true
     },
+
     "session": {
         "secret": "school39",
         "saveUninitialized": false,
         "resave": false,
         "cookie": {
             "maxAge": 900000
+        }
+    },
+    
+    "upload": {
+        "createParentPath": true,
+        "limits": {
+            "fileSize": 1677721600,
+            "files": 20
         }
     }
 }

@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const createError = require('http-errors');
 const session = require('express-session');
+const fileUpload = require('express-fileupload');
 const favicon = require('serve-favicon');
 const config = require('config');
 const mongoose = require('mongoose');
@@ -21,9 +22,10 @@ app.use('/static', express.static(path.join(__dirname, 'public')));
 if (config.util.getEnv('NODE_ENV') !== 'test')
     app.use(morgan('dev'));
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session(config.get('session')));
+app.use(fileUpload(config.get('upload')));
 app.use(favicon(path.join(__dirname, 'public', 'favicon.svg')));
 
 mongoose.connect(config.get('dbHost'), config.get('dbOptions'));
