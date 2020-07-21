@@ -3,7 +3,7 @@ const createError = require('http-errors');
 const Text = require('../models/text');
 
 const textSender = (req, res, next) => {
-    Text.find({ user: req.user._id }, 'text end', (err, texts) => {
+    Text.find({ user: req.user._id }, 'text hide end', (err, texts) => {
         if (err !== null)
             next(createError(500, err));
         else
