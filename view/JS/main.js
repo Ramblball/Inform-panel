@@ -12,8 +12,9 @@ function clearAllInputs() {
     });
 }
 
-function checkTextInput(e, limit, btn) {
-    let inputVal = document.getElementById(e.id).value;
+function checkTextInput(el, limit, btn) {
+    console.log(el)
+    let inputVal = el.value;
     if (!(inputVal > 0 && inputVal <= limit))
         disableButton(btn);
     else
@@ -21,9 +22,8 @@ function checkTextInput(e, limit, btn) {
 }
 
 function checkDateInput(e, btn) {
-    let inputVal = new Date(document.getElementById(e.id).value).getTime();
+    let inputVal = e.value.getTime();
     let now = Date.now();
-    console.log(inputVal, now);
     if (inputVal <= now)
         disableButton(btn);
     else
@@ -50,8 +50,10 @@ function createNewAlbum() {
         }
     })
         .then(res => {
-            if (res.ok)
+            if (res.ok) {
+                showAlert('uk-alert-primary', 'Альбом создан успешно');
                 showAlbums();
+            }
             else
                 console.log(res)
         })
@@ -92,20 +94,127 @@ function createAlbumDom(album) {
 
 function fillAlbumDropdown(album) {
     let drop = document.getElementById(`drop_${album._id}`);
-    drop.querySelector('.uk-nav>li:nth-child(8)>a:nth-child(1)').onclick = () => {
-        let url = new URL('album/remove', window.location.href)
-        let params = { id: album._id }
-        console.log(url, params)
-        Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
-        fetch(url, {
-            method: 'DELETE'
-        })
-            .then(res => {
-                console.log(res);
-                showAlbums();
-            })
-            .catch(er => console.error(er));
+    drop.querySelector('.uk-nav>li:nth-child(5) > a:nth-child(1)').onclick = () => {
+        fillChangingModal('album', 'text', 'name', album);
+    };
+    drop.querySelector('.uk-nav>li:nth-child(6) > a:nth-child(1)').onclick = () => {
+        fillChangingModal('album', 'text', 'comment', album);
+    };
+    drop.querySelector('.uk-nav>li:nth-child(7) > a:nth-child(1)').onclick = () => {
+        fillChangingModal('album', 'date', 'end', album);
+    };
+    drop.querySelector('.uk-nav>li:nth-child(9)>a:nth-child(1)').onclick = () => {
+        removeObject('album', album._id, showAlbums, `Альбом "${album.name}" успешно удален`,
+            'Ошибка во время удаления альбома');
+    };
+}
+
+function fillChangingModal(baseUrl, inputType, changeKey, originalObj) {
+    let modal = document.getElementById('changeObjModal');
+    modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').setAttribute('type', inputType);
+    modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').value = originalObj[changeKey];
+    switch (changeKey) {
+        case 'name':
+            modal.querySelector('div:nth-child(1) > div:nth-child(2) >  span:nth-child(1)').textContent = 'Название';
+            modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').onkeyup = (e) => {
+                checkTextInput(e.target, 200, 'saveObjChanges');
+            };
+            break;
+        case 'comment':
+            modal.querySelector('div:nth-child(1) > div:nth-child(2) >  span:nth-child(1)').textContent = 'Комментарий';
+            modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').onkeyup = (e) => {
+                checkTextInput(e.target, 300, 'saveObjChanges');
+            };
+            break;
+
+        case 'end':
+            modal.querySelector('div:nth-child(1) > div:nth-child(2) >  span:nth-child(1)').textContent = 'Дата удаления';
+            modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').onkeyup = (e) => {
+                checkDateInput(e.target, 'saveObjChanges');
+            };
+            break;
     }
+    modal.querySelector('#saveObjChanges').onclick = () => {
+        let changed = null;
+        switch (inputType) {
+            case 'text':
+                changed = modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').value;
+                break;
+            case 'date':
+                changed = new Date(modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').value).getTime();
+                break;
+            default:
+                break;
+        }
+        updateObject(baseUrl, originalObj._id, { [changeKey]: changed }, showAlbums,
+            'Имя альбома успешно изменено', 'Ошибка при изменении имени альбома');
+        UIkit.modal(modal).hide();
+    };
+    UIkit.modal(modal).show();
+}
+
+function updateObject(baseUrl, objId, body, successFunc, successMsg, errorMsg) {
+    let url = new URL(`${baseUrl}/update`, window.location.href)
+    let params = { id: objId }
+    Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
+    fetch(url, {
+        method: 'PUT',
+        body: body
+    })
+        .then(res => {
+            showAlert('uk-alert-primary', successMsg);
+            successFunc();
+        })
+        .catch(er => {
+            showAlert('uk-alert-danger', errorMsg);
+            console.error(er)
+        });
+}
+
+function removeObject(baseUrl, objId, successFunc, successMsg, errorMsg) {
+    let url = new URL(`${baseUrl}/remove`, window.location.href)
+    let params = { id: objId }
+    Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
+    fetch(url, {
+        method: 'DELETE'
+    })
+        .then(res => {
+            if (!(res.ok))
+                showAlert('uk-alert-danger', errorMsg);
+            else {
+                showAlert('uk-alert-primary', successMsg);
+                successFunc();
+            }
+        })
+        .catch(er => {
+            showAlert('uk-alert-danger', errorMsg);
+            console.error(er)
+        });
+}
+
+function showAlert(style, message) {
+    let wrapper = document.createElement('div');
+    wrapper.setAttribute('id', 'alert-wrapper');
+    wrapper.style.position = 'absolute';
+    wrapper.style.zIndex = 1;
+    wrapper.style.top = '30px';
+    wrapper.style.width = '100%';
+    let alertDiv = document.createElement('div');
+    alertDiv.setAttribute('uk-alert', '');
+    alertDiv.setAttribute('class', style + ' uk-align-center');
+    let par = document.createElement('p');
+    par.textContent = message;
+    alertDiv.appendChild(par);
+    alertDiv.style.width = '50%';
+    wrapper.appendChild(alertDiv);
+    document.body.appendChild(wrapper);
+    removeAlert();
+}
+
+function removeAlert() {
+    setTimeout(() => {
+        document.getElementById('alert-wrapper').remove();
+    }, 2500);
 }
 
 function createAlbumDropdown(album) {
@@ -116,6 +225,7 @@ function createAlbumDropdown(album) {
                 <li>${album.comment}</li>
                 <li class="uk-nav-divider"></li>
                 <li><a href='#'>Добавить файл</a></li>
+                <li><a href='#'>Изменить название</a></li>
                 <li><a href='#'>Изменить комментарий</a></li>
                 <li><a href='#'>Изменить дату удаления</a></li>
                 <li><a href='#'>${album.hide ? 'Показать' : 'Скрыть'}</a></li>
