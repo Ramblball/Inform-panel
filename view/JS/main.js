@@ -109,10 +109,27 @@ function fillAlbumDropdown(album) {
     };
 }
 
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
 function fillChangingModal(baseUrl, inputType, changeKey, originalObj) {
     let modal = document.getElementById('changeObjModal');
     modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').setAttribute('type', inputType);
-    modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').value = originalObj[changeKey];
+    if (inputType == 'date')
+        modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').value = formatDate(originalObj[changeKey]); 
+    else
+        modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').value = originalObj[changeKey];
     switch (changeKey) {
         case 'name':
             modal.querySelector('div:nth-child(1) > div:nth-child(2) >  span:nth-child(1)').textContent = 'Название';
@@ -219,7 +236,7 @@ function removeAlert() {
 
 function createAlbumDropdown(album) {
     const dropdownMarkup = `
-        <div uk-dropdown id='drop_${album._id}'>
+        <div uk-dropdown='delay-hide: 0' id='drop_${album._id}'>
             <ul class='uk-nav uk-dropdown-nav'>
                 <li>${album.name}</li>
                 <li>${album.comment}</li>
