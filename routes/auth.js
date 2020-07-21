@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const createError = require('http-errors');
 const passport = require('../packages/passport');
 const path = require('path');
 const User = require('../models/user');
@@ -6,6 +7,21 @@ const User = require('../models/user');
 router.post('/auth', (req, res, next) => {
 	const data = req.body;
 	const pass = data.password;
+	if (pass === undefined) {
+		next(createError(400, {
+			errors: {
+				password: {
+					properties: {
+					  message: 'Path `password` is required.',
+					  type: 'required',
+					  path: 'password'
+					},
+					kind: 'required',
+					path: 'password'
+				  }
+			}
+		}));
+	}
 	data.password = undefined;
 
 	let user = new User(data);
@@ -13,14 +29,13 @@ router.post('/auth', (req, res, next) => {
 
 	user.save(err => {
 		if (err)
-			res.status(400).json(err.errors);
+			next(createError(400, err));
 		else
 			res.sendStatus(200);
 	})
 });
 
 router.get('/login', (req, res, next) => {
-	console.log(req.isAuthenticated());
 	res.status(200).sendFile(path.join(__dirname, '..', 'view', 'HTML', 'login.html'));
   });
 

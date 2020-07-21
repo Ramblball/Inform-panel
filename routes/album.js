@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const createError = require('http-errors');
 
 const Album = require('../models/album');
 
@@ -7,7 +8,7 @@ const sendAlbums = (req, res, next) => {
         if (err === null)
             res.send(albums);
         else
-            next(err);
+            next(createError(500, err));
     });
 }
 
@@ -21,29 +22,34 @@ router.post('/create', (req, res, next) => {
 
     album.save(err => {
         if (err !== null)
-            next(err.errors);
-        else 
+            next(createError(400, err.errors));
+        else
             next();
     });
 }, sendAlbums);
 
 router.put('/update', (req, res, next) => {
-    Album.findById({ _id: req.params.id }, (err, album) => {
+    Album.findOne({ _id: req.query.id, user: req.user._id }, (err, album) => {
         if (err !== null)
             next(err);
-        Object.assign(album.toObject(), req.body).save(err => {
+        if (album === undefined)
+            next(createError(404));
+        Object.assign(album, req.body).save(err => {
             if (err !== null)
-                next(err.errors);
+                next(createError(400, err.errors));
             next();
         });
     });
 }, sendAlbums);
 
 router.delete('/remove', (req, res, next) => {
-    Album.deleteOne({ '_id': req.params.id }, err => {
+    Album.deleteOne({ _id: req.query.id, user: req.user._id }, (err, album) => {
         if (err !== null)
             next(err);
-        next();
+        else if (album === undefined)
+            next(createError(404));
+        else
+            next();
     });
 }, sendAlbums);
 
