@@ -13,16 +13,15 @@ function clearAllInputs() {
 }
 
 function checkTextInput(el, limit, btn) {
-    console.log(el)
     let inputVal = el.value;
-    if (!(inputVal > 0 && inputVal <= limit))
+    if (!(inputVal.length > 0 && inputVal.length <= limit)) {
         disableButton(btn);
-    else
+    } else
         enableButton(btn);
 }
 
 function checkDateInput(e, btn) {
-    let inputVal = e.value.getTime();
+    let inputVal = new Date(e.value).getTime();
     let now = Date.now();
     if (inputVal <= now)
         disableButton(btn);
@@ -43,18 +42,17 @@ function createNewAlbum() {
     let albumComment = document.getElementById('newAlbumComment').value;
     let albumDate = new Date(document.getElementById('newAlbumDate').value).getTime();
     fetch('/album/create', {
-        method: 'POST',
-        body: JSON.stringify({ name: albumName, comment: albumComment, end: albumDate }),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
+            method: 'POST',
+            body: JSON.stringify({ name: albumName, comment: albumComment, end: albumDate }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
         .then(res => {
             if (res.ok) {
                 showAlert('uk-alert-primary', 'Альбом создан успешно');
                 showAlbums();
-            }
-            else
+            } else
                 console.log(res)
         })
         .catch(er => console.error(er))
@@ -66,10 +64,10 @@ function createNewAlbum() {
 function showAlbums() {
     getAlbumPromise()
         .then(albums => {
-            if (albums.length == 0)
-                return
             let albumContainer = document.getElementById('mainField');
             albumContainer.innerHTML = '';
+            if (albums.length == 0)
+                return
             albumContainer.setAttribute('uk-grid', '');
             albumContainer.classList.add('uk-child-width-1-5');
             albums.forEach(el => {
@@ -84,7 +82,11 @@ function createAlbumDom(album) {
     let albumDom = document.createElement('div');
     albumDom.setAttribute('id', `album_${album._id}`);
     let albumCard = document.createElement('div');
-    albumCard.setAttribute('class', 'uk-card uk-card-default uk-card-body');
+    albumCard.setAttribute('class', 'uk-card uk-card-body');
+    if (album.hide)
+        albumCard.classList.add('uk-card-secondary');
+    else
+        albumCard.classList.add('uk-card-default');
     albumCard.textContent = album.name;
     albumDom.appendChild(albumCard);
     let albumDropdown = createAlbumDropdown(album);
@@ -103,6 +105,10 @@ function fillAlbumDropdown(album) {
     drop.querySelector('.uk-nav>li:nth-child(7) > a:nth-child(1)').onclick = () => {
         fillChangingModal('album', 'date', 'end', album);
     };
+    drop.querySelector('.uk-nav>li:nth-child(8) > a:nth-child(1)').onclick = () => {
+        updateObject('album', album._id, { hide: !album.hide }, showAlbums, 'Видимость альбома изменена',
+            'Ошибка во время изменения видимости альбома');
+    };
     drop.querySelector('.uk-nav>li:nth-child(9)>a:nth-child(1)').onclick = () => {
         removeObject('album', album._id, showAlbums, `Альбом "${album.name}" успешно удален`,
             'Ошибка во время удаления альбома');
@@ -110,14 +116,14 @@ function fillAlbumDropdown(album) {
 }
 
 function formatDate(date) {
-    var d = new Date(date),
-        month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate(),
-        year = d.getFullYear();
+    let d = new Date(date);
+    let month = '' + (d.getMonth() + 1);
+    let day = '' + d.getDate();
+    let year = d.getFullYear();
 
-    if (month.length < 2) 
+    if (month.length < 2)
         month = '0' + month;
-    if (day.length < 2) 
+    if (day.length < 2)
         day = '0' + day;
 
     return [year, month, day].join('-');
@@ -127,7 +133,7 @@ function fillChangingModal(baseUrl, inputType, changeKey, originalObj) {
     let modal = document.getElementById('changeObjModal');
     modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').setAttribute('type', inputType);
     if (inputType == 'date')
-        modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').value = formatDate(originalObj[changeKey]); 
+        modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').value = formatDate(originalObj[changeKey]);
     else
         modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').value = originalObj[changeKey];
     switch (changeKey) {
@@ -163,7 +169,9 @@ function fillChangingModal(baseUrl, inputType, changeKey, originalObj) {
             default:
                 break;
         }
-        updateObject(baseUrl, originalObj._id, { [changeKey]: changed }, showAlbums,
+        updateObject(baseUrl, originalObj._id, {
+                [changeKey]: changed
+            }, showAlbums,
             'Имя альбома успешно изменено', 'Ошибка при изменении имени альбома');
         UIkit.modal(modal).hide();
     };
@@ -175,16 +183,21 @@ function updateObject(baseUrl, objId, body, successFunc, successMsg, errorMsg) {
     let params = { id: objId }
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
     fetch(url, {
-        method: 'PUT',
-        body: body
-    })
+            method: 'PUT',
+            body: body
+        })
         .then(res => {
-            showAlert('uk-alert-primary', successMsg);
-            successFunc();
+            console.log(res);
+            if (!(res.ok))
+                showAlert('uk-alert-danger', errorMsg);
+            else {
+                showAlert('uk-alert-primary', successMsg);
+                successFunc();
+            }
         })
         .catch(er => {
             showAlert('uk-alert-danger', errorMsg);
-            console.error(er)
+            console.error(er);
         });
 }
 
@@ -193,8 +206,8 @@ function removeObject(baseUrl, objId, successFunc, successMsg, errorMsg) {
     let params = { id: objId }
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
     fetch(url, {
-        method: 'DELETE'
-    })
+            method: 'DELETE'
+        })
         .then(res => {
             if (!(res.ok))
                 showAlert('uk-alert-danger', errorMsg);
