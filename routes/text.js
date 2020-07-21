@@ -28,7 +28,7 @@ router.post('/create', (req, res, next) => {
 }, textSender);
 
 router.put('/update', (req, res, next) => {
-    Text.findOne({ _id: req.params.id, user: req.user._id }, (err, text) => {
+    Text.findOne({ _id: req.query.id, user: req.user._id }, (err, text) => {
         if (err !== null)
             next(err);
         else if (text === undefined)
@@ -43,7 +43,7 @@ router.put('/update', (req, res, next) => {
 }, textSender);
 
 router.delete('/remove', (req, res, next) => {
-    Text.deleteOne({ _id: req.params.id, user: req.user._id }, (err, text) => {
+    Text.deleteOne({ _id: req.query.id, user: req.user._id }, (err, text) => {
         if (err !== null)
             next(err);
         else if (text === undefined)
