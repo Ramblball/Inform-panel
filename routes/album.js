@@ -29,6 +29,7 @@ router.post('/create', (req, res, next) => {
 }, sendAlbums);
 
 router.put('/update', (req, res, next) => {
+    console.log(req.body)
     Album.findOne({ _id: req.query.id, user: req.user._id }, (err, album) => {
         if (err !== null)
             next(err);

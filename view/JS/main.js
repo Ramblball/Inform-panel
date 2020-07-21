@@ -96,6 +96,9 @@ function createAlbumDom(album) {
 
 function fillAlbumDropdown(album) {
     let drop = document.getElementById(`drop_${album._id}`);
+    drop.onclick = () => {
+        UIkit.dropdown(drop).hide();
+    };
     drop.querySelector('.uk-nav>li:nth-child(5) > a:nth-child(1)').onclick = () => {
         fillChangingModal('album', 'text', 'name', album);
     };
@@ -178,16 +181,18 @@ function fillChangingModal(baseUrl, inputType, changeKey, originalObj) {
     UIkit.modal(modal).show();
 }
 
-function updateObject(baseUrl, objId, body, successFunc, successMsg, errorMsg) {
+function updateObject(baseUrl, objId, data, successFunc, successMsg, errorMsg) {
     let url = new URL(`${baseUrl}/update`, window.location.href)
     let params = { id: objId }
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
     fetch(url, {
             method: 'PUT',
-            body: body
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
         })
         .then(res => {
-            console.log(res);
             if (!(res.ok))
                 showAlert('uk-alert-danger', errorMsg);
             else {
