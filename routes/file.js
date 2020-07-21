@@ -3,7 +3,7 @@ const router = express.Router();
 const path = require('path');
 const _ = require('lodash');
 const createError = require('http-errors');
-const uuid = require('uuid/v4');
+const uuid = require('uuid');
 
 const Album = require('../models/album');
 const File = require('../models/file');
@@ -54,8 +54,8 @@ router.post('/upload', (req, res, next) => {
                     let ext = path.extname(file.name).toLowerCase();
                     let type = getType(ext);
                     if (type === undefined)
-                        continue;
-                    let name = uuid() + '.' + ext
+                        return;
+                    let name = uuid.v4() + '.' + ext
                     album.file.push(new File({
                         name: name,
                         type: type,
