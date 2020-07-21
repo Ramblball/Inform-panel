@@ -10,6 +10,9 @@ function clearAllInputs() {
     document.querySelectorAll('input').forEach(el => {
         el.value = '';
     });
+    document.querySelectorAll('textarea').forEach(el => {
+        el.value = '';
+    });
 }
 
 function checkTextInput(el, limit, btn) {
@@ -52,11 +55,16 @@ function createNewAlbum() {
             if (res.ok) {
                 showAlert('uk-alert-primary', 'Альбом создан успешно');
                 showAlbums();
-            } else
-                console.log(res)
+            } else {
+                showAlert('uk-alert-danger', 'Ошибка во время создания альбома');
+            }
         })
-        .catch(er => console.error(er))
+        .catch(er => {
+            showAlert('uk-alert-danger', 'Ошибка во время создания альбома');
+            console.error(er);
+        })
         .finally(() => {
+            clearAllInputs();
             UIkit.modal(document.getElementById('createAlbum')).hide();
         })
 }
@@ -100,13 +108,16 @@ function fillAlbumDropdown(album) {
         UIkit.dropdown(drop).hide();
     };
     drop.querySelector('.uk-nav>li:nth-child(5) > a:nth-child(1)').onclick = () => {
-        fillChangingModal('album', 'text', 'name', album);
+        fillChangingModal('album', 'text', 'name', album, showAlbums, 'Название альбома изменена',
+            'Ошибка во время изменения названия альбома');
     };
     drop.querySelector('.uk-nav>li:nth-child(6) > a:nth-child(1)').onclick = () => {
-        fillChangingModal('album', 'text', 'comment', album);
+        fillChangingModal('album', 'text', 'comment', album, showAlbums, 'Комментарий альбома изменена',
+            'Ошибка во время изменения комментария альбома');
     };
     drop.querySelector('.uk-nav>li:nth-child(7) > a:nth-child(1)').onclick = () => {
-        fillChangingModal('album', 'date', 'end', album);
+        fillChangingModal('album', 'date', 'end', album, showAlbums, 'Дата удаления альбома изменена',
+            'Ошибка во время изменения даты удаления альбома');
     };
     drop.querySelector('.uk-nav>li:nth-child(8) > a:nth-child(1)').onclick = () => {
         updateObject('album', album._id, { hide: !album.hide }, showAlbums, 'Видимость альбома изменена',
@@ -131,17 +142,25 @@ function formatDate(date) {
 
     return [year, month, day].join('-');
 }
-
-function fillChangingModal(baseUrl, inputType, changeKey, originalObj) {
+// TODO: Отрефакторить эту штуку
+function fillChangingModal(baseUrl, inputType, changeKey, originalObj, successFunc,
+    successMsg, errorMsg) {
     let modal = document.getElementById('changeObjModal');
+
     modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').setAttribute('type', inputType);
     if (inputType == 'date')
         modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').value = formatDate(originalObj[changeKey]);
-    else
+    else if (inputType = 'text')
         modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').value = originalObj[changeKey];
     switch (changeKey) {
         case 'name':
             modal.querySelector('div:nth-child(1) > div:nth-child(2) >  span:nth-child(1)').textContent = 'Название';
+            modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').onkeyup = (e) => {
+                checkTextInput(e.target, 200, 'saveObjChanges');
+            };
+            break;
+        case 'text':
+            modal.querySelector('div:nth-child(1) > div:nth-child(2) >  span:nth-child(1)').textContent = 'Содержимое';
             modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').onkeyup = (e) => {
                 checkTextInput(e.target, 200, 'saveObjChanges');
             };
@@ -174,8 +193,8 @@ function fillChangingModal(baseUrl, inputType, changeKey, originalObj) {
         }
         updateObject(baseUrl, originalObj._id, {
                 [changeKey]: changed
-            }, showAlbums,
-            'Имя альбома успешно изменено', 'Ошибка при изменении имени альбома');
+            }, successFunc,
+            successMsg, errorMsg);
         UIkit.modal(modal).hide();
     };
     UIkit.modal(modal).show();
@@ -228,7 +247,8 @@ function removeObject(baseUrl, objId, successFunc, successMsg, errorMsg) {
 }
 
 function showAlert(style, message) {
-    let wrapper = document.createElement('div');
+    let wrapper = document.createElement('id');
+    document.getElementById('alert-wrapper')
     wrapper.setAttribute('id', 'alert-wrapper');
     wrapper.style.position = 'absolute';
     wrapper.style.zIndex = 1;
@@ -254,7 +274,7 @@ function removeAlert() {
 
 function createAlbumDropdown(album) {
     const dropdownMarkup = `
-        <div uk-dropdown='delay-hide: 0' id='drop_${album._id}'>
+        <div uk-dropdown id='drop_${album._id}'>
             <ul class='uk-nav uk-dropdown-nav'>
                 <li>${album.name}</li>
                 <li>${album.comment}</li>
@@ -280,6 +300,109 @@ async function getAlbumPromise() {
     }
 }
 
+function createNewText() {
+    let textContent = document.getElementById('newTextContent').value;
+    let textDate = new Date(document.getElementById('newTextDate').value).getTime();
+    fetch('text/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: textContent, end: textDate })
+        }).then(res => {
+            if (res.ok) {
+                showAlert('uk-alert-primary', 'Объявление создано успешно');
+                showTexts();
+            } else {
+                showAlert('uk-alert-danger', 'Ошибка во время создания объявления');
+            }
+        })
+        .catch(er => {
+            showAlert('uk-alert-danger', 'Ошибка во время создания объявления');
+            console.error(er);
+        })
+        .finally(() => {
+            clearAllInputs();
+            UIkit.modal(document.getElementById('createText')).hide();
+        })
+
+}
+
+async function getTextsPromise() {
+    try {
+        const res = await fetch('/text');
+        return await res.json();
+    } catch (er) {
+        return console.log(error);
+    }
+}
+
+function showTexts() {
+    getTextsPromise().then(texts => {
+        let textContainer = document.getElementById('mainField');
+        textContainer.innerHTML = '';
+        if (texts.length == 0)
+            return
+        texts.forEach(el => {
+            let textDom = createTextDom(el);
+            textContainer.appendChild(textDom);
+            fillTextDropdown(el);
+        })
+    });
+}
+
+function createTextDom(text) {
+    let textDom = document.createElement('div');
+    textDom.setAttribute('id', `text_${text._id}`);
+    textDom.setAttribute('class', 'uk-align-center')
+    let textCard = document.createElement('div');
+    textCard.setAttribute('class', 'uk-card uk-card-body');
+    if (text.hide)
+        textCard.classList.add('uk-card-secondary');
+    else
+        textCard.classList.add('uk-card-default');
+    textCard.textContent = text.text;
+    textDom.appendChild(textCard);
+    textDom.style.width = '80%';
+    let textDropdown = createTextDropdown(text);
+    textDom.innerHTML += textDropdown;
+    return textDom;
+}
+
+function createTextDropdown(text) {
+    const markup = `
+        <div uk-dropdown id='drop_${text._id}'>
+            <ul class='uk-nav uk-dropdown-nav'>
+                <li><a href='#'>Изменить содержимое</a></li>
+                <li><a href='#'>Изменить дату удаления</a></li>
+                <li><a href='#'>${text.hide ? 'Показать' : 'Скрыть'}</a></li>
+                <li><a href='#'>Удалить</a></li>
+            </ul>
+        </div>
+    `
+    return markup.replace(/\s{2,}/g, '');
+}
+
+function fillTextDropdown(text) {
+    let drop = document.getElementById(`drop_${text._id}`);
+    drop.onclick = () => {
+        UIkit.dropdown(drop).hide();
+    };
+    drop.querySelector('.uk-nav>li:nth-child(1) > a:nth-child(1)').onclick = () => {
+        fillChangingModal('textarea', 'text', 'name', text, showTexts, 'Дата удаления объявления изменена',
+            'Ошибка во время изменения даты удаления объявления');
+    };
+    drop.querySelector('.uk-nav>li:nth-child(2) > a:nth-child(1)').onclick = () => {
+        fillChangingModal('text', 'date', 'end', text, showTexts, 'Дата удаления объявления изменена',
+            'Ошибка во время изменения даты удаления объявления');
+    };
+    drop.querySelector('.uk-nav>li:nth-child(3) > a:nth-child(1)').onclick = () => {
+        updateObject('text', text._id, { hide: !text.hide }, showTexts, 'Видимость объявления изменена',
+            'Ошибка во время изменения видимости объявления');
+    };
+    drop.querySelector('.uk-nav>li:nth-child(4)>a:nth-child(1)').onclick = () => {
+        removeObject('text', text._id, showTexts, `Объявление успешно удален`,
+            'Ошибка во время удаления объявления');
+    };
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     loadPageElements();
