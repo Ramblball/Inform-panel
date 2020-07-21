@@ -1,5 +1,8 @@
 const router = require('express').Router();
 const createError = require('http-errors');
+const path = require('path');
+const fs = require('fs');
+const _ = require('lodash');
 
 const Album = require('../models/album');
 
@@ -48,8 +51,12 @@ router.delete('/remove', (req, res, next) => {
             next(err);
         else if (album === undefined)
             next(createError(404));
-        else
+        else {
+            _.forEach(album.file, file => {
+                fs.unlink(path.join(__dirname, '..', 'upload', file.name));
+            });
             next();
+        }
     });
 }, sendAlbums);
 
