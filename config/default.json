@@ -8,7 +8,7 @@
         "saveUninitialized": false,
         "resave": false,
         "cookie": {
-            "maxAge": 900000
+            "maxAge": 9000000
         }
     }
 }

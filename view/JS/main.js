@@ -93,7 +93,7 @@ function createAlbumDom(album) {
 function fillAlbumDropdown(album) {
     let drop = document.getElementById(`drop_${album._id}`);
     drop.querySelector('.uk-nav>li:nth-child(8)>a:nth-child(1)').onclick = () => {
-        let url = new URL('remove', window.location.href)
+        let url = new URL('album/remove', window.location.href)
         let params = { id: album._id }
         console.log(url, params)
         Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
