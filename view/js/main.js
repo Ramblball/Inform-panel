@@ -45,12 +45,12 @@ function createNewAlbum() {
     let albumComment = document.getElementById('newAlbumComment').value;
     let albumDate = new Date(document.getElementById('newAlbumDate').value).getTime();
     fetch('/album/create', {
-            method: 'POST',
-            body: JSON.stringify({ name: albumName, comment: albumComment, end: albumDate }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+        method: 'POST',
+        body: JSON.stringify({ name: albumName, comment: albumComment, end: albumDate }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
         .then(res => {
             if (res.ok) {
                 showAlert('uk-alert-primary', 'Альбом создан успешно');
@@ -108,19 +108,19 @@ function fillAlbumDropdown(album) {
         UIkit.dropdown(drop).hide();
     };
     drop.querySelector('.uk-nav>li:nth-child(5) > a:nth-child(1)').onclick = () => {
-        fillChangingModal('album', 'text', 'name', album, showAlbums, 'Название альбома изменена',
+        fillChangeObjectModal('text', 'name', album, 'album', showAlbums, 'Название альбома изменена',
             'Ошибка во время изменения названия альбома');
     };
     drop.querySelector('.uk-nav>li:nth-child(6) > a:nth-child(1)').onclick = () => {
-        fillChangingModal('album', 'text', 'comment', album, showAlbums, 'Комментарий альбома изменена',
+        fillChangeObjectModal('text', 'comment', album, 'album', showAlbums, 'Комментарий альбома изменена',
             'Ошибка во время изменения комментария альбома');
     };
     drop.querySelector('.uk-nav>li:nth-child(7) > a:nth-child(1)').onclick = () => {
-        fillChangingModal('album', 'date', 'end', album, showAlbums, 'Дата удаления альбома изменена',
+        fillChangeObjectModal('date', 'end', album, 'album', showAlbums, 'Дата удаления альбома изменена',
             'Ошибка во время изменения даты удаления альбома');
     };
     drop.querySelector('.uk-nav>li:nth-child(8) > a:nth-child(1)').onclick = () => {
-        updateObject('album', album._id, { hide: !album.hide }, showAlbums, 'Видимость альбома изменена',
+        updateObject(album._id, { hide: !album.hide }, 'album', showAlbums, 'Видимость альбома изменена',
             'Ошибка во время изменения видимости альбома');
     };
     drop.querySelector('.uk-nav>li:nth-child(9)>a:nth-child(1)').onclick = () => {
@@ -142,62 +142,67 @@ function formatDate(date) {
 
     return [year, month, day].join('-');
 }
-function fillChangeObjectModal()
-
-
-// TODO: Отрефакторить эту штуку
-function fillChagingModal(baseUrl, inputType, changeKey, originalObj, successFunc,
-    successMsg, errorMsg) {
-    let modal = document.getElementById('changeObjModal');
-
-    modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').setAttribute('type', inputType);
-    if (inputType == 'date')
-        modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').value = formatDate(originalObj[changeKey]);
-    else if (inputType = 'text')
-        modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').value = originalObj[changeKey];
+function fillChangeObjectModal(changeType, changeKey, originalObject, baseUrl,
+    successFunction, successMessage, errorMessage) {
+    let modal = document.getElementById('change-object-modal');
+    let changeDom = null;
+    switch (changeType) {
+        case 'text':
+        case 'date':
+            changeDom = document.createElement('input');
+            changeDom.setAttribute('type', changeType);
+            changeDom.setAttribute('class', 'uk-input');
+        case 'text':
+            changeDom.onkeyup = (event) => {
+                checkTextInput(event.target, changeKey == 'name' ? 64 : 256, 'change-object-save-button');
+            }
+            break;
+        case 'date':
+            changeDom.onkeyup = (event) => {
+                checkDateInput(event.target, 'change-object-save-button');
+            }
+            break;
+        case 'textarea':
+            changeDom = document.createElement('textarea');
+            changeDom.setAttribute('class', 'uk-textarea');
+            changeDom.style.resize = 'none';
+            changeDom.onkeyup = (event) => {
+                checkTextInput(event.target, 512, 'change-object-save-button');
+            }
+            break;
+        default:
+            break;
+    }
+    let prevValue = originalObject[changeKey];
+    if (changeType == 'date')
+        prevValue = formatDate(prevValue);
+    changeDom.value = prevValue;
+    let previousChangedDom = modal.querySelector('div:nth-child(1) > div:nth-child(2)').childNodes[3];
+    if (typeof(previousChangedDom) != 'undefined' && previousChangedDom != null)
+        modal.querySelector('div:nth-child(1) > div:nth-child(2)').removeChild(previousChangedDom);
+    modal.querySelector('div:nth-child(1) > div:nth-child(2)').appendChild(changeDom);
     switch (changeKey) {
         case 'name':
             modal.querySelector('div:nth-child(1) > div:nth-child(2) >  span:nth-child(1)').textContent = 'Название';
-            modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').onkeyup = (e) => {
-                checkTextInput(e.target, 200, 'saveObjChanges');
-            };
             break;
         case 'text':
             modal.querySelector('div:nth-child(1) > div:nth-child(2) >  span:nth-child(1)').textContent = 'Содержимое';
-            modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').onkeyup = (e) => {
-                checkTextInput(e.target, 200, 'saveObjChanges');
-            };
             break;
         case 'comment':
             modal.querySelector('div:nth-child(1) > div:nth-child(2) >  span:nth-child(1)').textContent = 'Комментарий';
-            modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').onkeyup = (e) => {
-                checkTextInput(e.target, 300, 'saveObjChanges');
-            };
             break;
-
         case 'end':
             modal.querySelector('div:nth-child(1) > div:nth-child(2) >  span:nth-child(1)').textContent = 'Дата удаления';
-            modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').onkeyup = (e) => {
-                checkDateInput(e.target, 'saveObjChanges');
-            };
             break;
     }
-    modal.querySelector('#saveObjChanges').onclick = () => {
-        let changed = null;
-        switch (inputType) {
-            case 'text':
-                changed = modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').value;
-                break;
-            case 'date':
-                changed = new Date(modal.querySelector('div:nth-child(1) > div:nth-child(2) > input:nth-child(2)').value).getTime();
-                break;
-            default:
-                break;
-        }
-        updateObject(baseUrl, originalObj._id, {
-                [changeKey]: changed
-            }, successFunc,
-            successMsg, errorMsg);
+    modal.querySelector('#change-object-save-button').onclick = () => {
+        let changed = changeDom.value;
+        if (changeType === 'date')
+            changed = new Date(changed).getTime();
+        updateObject(baseUrl, originalObject._id, {
+            [changeKey]: changed
+        }, successFunction,
+            successMessage, errorMessage);
         UIkit.modal(modal).hide();
     };
     UIkit.modal(modal).show();
@@ -208,12 +213,12 @@ function updateObject(baseUrl, objId, data, successFunc, successMsg, errorMsg) {
     let params = { id: objId }
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
     fetch(url, {
-            method: 'PUT',
-            body: JSON.stringify(data),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
         .then(res => {
             if (!(res.ok))
                 showAlert('uk-alert-danger', errorMsg);
@@ -233,8 +238,8 @@ function removeObject(baseUrl, objId, successFunc, successMsg, errorMsg) {
     let params = { id: objId }
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
     fetch(url, {
-            method: 'DELETE'
-        })
+        method: 'DELETE'
+    })
         .then(res => {
             if (!(res.ok))
                 showAlert('uk-alert-danger', errorMsg);
@@ -307,17 +312,17 @@ function createNewText() {
     let textContent = document.getElementById('newTextContent').value;
     let textDate = new Date(document.getElementById('newTextDate').value).getTime();
     fetch('text/create', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: textContent, end: textDate })
-        }).then(res => {
-            if (res.ok) {
-                showAlert('uk-alert-primary', 'Объявление создано успешно');
-                showTexts();
-            } else {
-                showAlert('uk-alert-danger', 'Ошибка во время создания объявления');
-            }
-        })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: textContent, end: textDate })
+    }).then(res => {
+        if (res.ok) {
+            showAlert('uk-alert-primary', 'Объявление создано успешно');
+            showTexts();
+        } else {
+            showAlert('uk-alert-danger', 'Ошибка во время создания объявления');
+        }
+    })
         .catch(er => {
             showAlert('uk-alert-danger', 'Ошибка во время создания объявления');
             console.error(er);
@@ -390,11 +395,11 @@ function fillTextDropdown(text) {
         UIkit.dropdown(drop).hide();
     };
     drop.querySelector('.uk-nav>li:nth-child(1) > a:nth-child(1)').onclick = () => {
-        fillChangingModal('textarea', 'text', 'name', text, showTexts, 'Дата удаления объявления изменена',
-            'Ошибка во время изменения даты удаления объявления');
+        fillChangeObjectModal('textarea', 'text', text, 'text', showTexts, 'Объявление изменено',
+            'Ошибка во время изменения объявления');
     };
     drop.querySelector('.uk-nav>li:nth-child(2) > a:nth-child(1)').onclick = () => {
-        fillChangingModal('text', 'date', 'end', text, showTexts, 'Дата удаления объявления изменена',
+        fillChangeObjectModal('date', 'end', text, 'text', showTexts, 'Дата удаления объявления изменена',
             'Ошибка во время изменения даты удаления объявления');
     };
     drop.querySelector('.uk-nav>li:nth-child(3) > a:nth-child(1)').onclick = () => {
