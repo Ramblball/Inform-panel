@@ -39,7 +39,8 @@
             <ul class="uk-list">
                 <li>
                     <button class="uk-button uk-button-primary uk-width-1-1">Создать...</button>
-                    <div uk-dropdown="mode: click;  pos: bottom-justify; boundary: .boundary-align; boundary-align: true">
+                    <div
+                        uk-dropdown="mode: click;  pos: bottom-justify; boundary: .boundary-align; boundary-align: true">
                         <ul class="uk-nav uk-dropdown-nav">
                             <li>
                                 <a href="#createAlbum" uk-toggle>Альбом <span uk-icon="icon: folder"></span></a>
@@ -50,20 +51,24 @@
                                         <div class="uk-align-center uk-container-xsmall uk-margin-small-top">
                                             <div class="uk-margin">
                                                 <span>Название</span>
-                                                <input onkeyup="checkTextInput(this, 200, 'createAlbumBtn')" id="newAlbumName" class="uk-input" type="text">
+                                                <input onkeyup="checkTextInput(this, 200, 'createAlbumBtn')"
+                                                    id="newAlbumName" class="uk-input" type="text">
                                             </div>
 
                                             <div class="uk-margin">
                                                 <span>Комментарий</span>
-                                                <input onkeyup="checkTextInput(this, 300, 'createAlbumBtn')" id="newAlbumComment" class="uk-input" type="text">
+                                                <input onkeyup="checkTextInput(this, 300, 'createAlbumBtn')"
+                                                    id="newAlbumComment" class="uk-input" type="text">
                                             </div>
 
                                             <div class="uk-margin">
                                                 <span>Дата удаления</span>
-                                                <input onchange="checkDateInput(this, 'createAlbumBtn')" id="newAlbumDate" class="uk-input" type="date">
+                                                <input onchange="checkDateInput(this, 'createAlbumBtn')"
+                                                    id="newAlbumDate" class="uk-input" type="date">
                                             </div>
 
-                                            <button id="createAlbumBtn" disabled onclick="createNewAlbum()" class="uk-button uk-button-primary uk-align-right">Создать</button>
+                                            <button id="createAlbumBtn" disabled onclick="createNewAlbum()"
+                                                class="uk-button uk-button-primary uk-align-right">Создать</button>
                                         </div>
                                     </div>
                                 </div>
@@ -77,15 +82,19 @@
                                         <div class="uk-align-center uk-container-xsmall uk-margin-small-top">
                                             <div class="uk-margin">
                                                 <span>Содержимое</span>
-                                                <textarea onkeyup="checkTextInput(this, 500, 'createTextBtn')" id="newTextContent" class="uk-textarea" style="resize: none;"></textarea>
+                                                <textarea onkeyup="checkTextInput(this, 500, 'createTextBtn')"
+                                                    id="newTextContent" class="uk-textarea"
+                                                    style="resize: none;"></textarea>
                                             </div>
 
                                             <div class="uk-margin">
                                                 <span>Дата удаления</span>
-                                                <input onchange="checkDateInput(this, 'createTextBtn')" id="newTextDate" class="uk-input" type="date">
+                                                <input onchange="checkDateInput(this, 'createTextBtn')" id="newTextDate"
+                                                    class="uk-input" type="date">
                                             </div>
 
-                                            <button id="createTextBtn" disabled onclick="createNewText()" class="uk-button uk-button-primary uk-align-right">Созадть</button>
+                                            <button id="createTextBtn" disabled onclick="createNewText()"
+                                                class="uk-button uk-button-primary uk-align-right">Созадть</button>
                                         </div>
                                     </div>
                                 </div>
@@ -96,26 +105,28 @@
                 <li>
                     <h2 class="uk-heading">Выберите раздел</h2>
                 </li>
-                <li><button onclick="showAlbums()" class="uk-button uk-button-default uk-width-1-1">Альбомы</button></li>
-                <li><button onclick="showTexts()" class="uk-button uk-button-default uk-width-1-1">Объявления</button></li>
+                <li><button onclick="showAlbums()" class="uk-button uk-button-default uk-width-1-1">Альбомы</button>
+                </li>
+                <li><button onclick="showTexts()" class="uk-button uk-button-default uk-width-1-1">Объявления</button>
+                </li>
             </ul>
         </div>
         <div class="uk-width-4-5" id="mainField">
         </div>
     </div>
 
-    <div id="changeObjModal" uk-modal>
+    <div id="change-object-modal" uk-modal>
         <div class="uk-modal-dialog uk-margin-auto-vertical uk-modal-body">
             <button class="uk-modal-close-default " type="button" uk-close></button>
             <div class="uk-margin">
                 <span></span>
                 <input class="uk-input">
             </div>
-            <button id="saveObjChanges" class="uk-button uk-button-primary uk-align-right">Сохранить</button>
+            <button id="change-object-save-button" class="uk-button uk-button-primary uk-align-right">Сохранить</button>
         </div>
     </div>
 
-    <script src="/static/JS/main.js "></script>
+    <script src="/static/JS/main.js"></script>
 
 </body>
 
