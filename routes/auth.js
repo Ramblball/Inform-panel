@@ -36,7 +36,7 @@ router.post('/auth', (req, res, next) => {
 });
 
 router.get('/login', (req, res, next) => {
-	res.status(200).sendFile(path.join(__dirname, '..', 'view', 'HTML', 'login.html'));
+	res.status(200).sendFile(path.join(__dirname, '..', 'view', 'html', 'login.html'));
   });
 
 router.post('/login', passport.authenticate('local', {
