@@ -45,12 +45,12 @@ function createNewAlbum() {
     let albumComment = document.getElementById('newAlbumComment').value;
     let albumDate = new Date(document.getElementById('newAlbumDate').value).getTime();
     fetch('/album/create', {
-        method: 'POST',
-        body: JSON.stringify({ name: albumName, comment: albumComment, end: albumDate }),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
+            method: 'POST',
+            body: JSON.stringify({ name: albumName, comment: albumComment, end: albumDate }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
         .then(res => {
             if (res.ok) {
                 showAlert('uk-alert-primary', 'Альбом создан успешно');
@@ -107,6 +107,13 @@ function fillAlbumDropdown(album) {
     drop.onclick = () => {
         UIkit.dropdown(drop).hide();
     };
+    drop.querySelector('.uk-nav>li:nth-child(4) > a:nth-child(1)').onclick = () => {
+        let input = document.getElementById('file-upload');
+        input.onchange = () => {
+            uploadFiles(album._id);
+        };
+        input.click();
+    };
     drop.querySelector('.uk-nav>li:nth-child(5) > a:nth-child(1)').onclick = () => {
         fillChangeObjectModal('text', 'name', album, 'album', showAlbums, 'Название альбома изменена',
             'Ошибка во время изменения названия альбома');
@@ -142,6 +149,7 @@ function formatDate(date) {
 
     return [year, month, day].join('-');
 }
+
 function fillChangeObjectModal(changeType, changeKey, originalObject, baseUrl,
     successFunction, successMessage, errorMessage) {
     let modal = document.getElementById('change-object-modal');
@@ -200,8 +208,8 @@ function fillChangeObjectModal(changeType, changeKey, originalObject, baseUrl,
         if (changeType === 'date')
             changed = new Date(changed).getTime();
         updateObject(baseUrl, originalObject._id, {
-            [changeKey]: changed
-        }, successFunction,
+                [changeKey]: changed
+            }, successFunction,
             successMessage, errorMessage);
         UIkit.modal(modal).hide();
     };
@@ -213,12 +221,12 @@ function updateObject(baseUrl, objId, data, successFunc, successMsg, errorMsg) {
     let params = { id: objId }
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
     fetch(url, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
+            method: 'PUT',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
         .then(res => {
             if (!(res.ok))
                 showAlert('uk-alert-danger', errorMsg);
@@ -238,8 +246,8 @@ function removeObject(baseUrl, objId, successFunc, successMsg, errorMsg) {
     let params = { id: objId }
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
     fetch(url, {
-        method: 'DELETE'
-    })
+            method: 'DELETE'
+        })
         .then(res => {
             if (!(res.ok))
                 showAlert('uk-alert-danger', errorMsg);
@@ -312,17 +320,17 @@ function createNewText() {
     let textContent = document.getElementById('newTextContent').value;
     let textDate = new Date(document.getElementById('newTextDate').value).getTime();
     fetch('text/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: textContent, end: textDate })
-    }).then(res => {
-        if (res.ok) {
-            showAlert('uk-alert-primary', 'Объявление создано успешно');
-            showTexts();
-        } else {
-            showAlert('uk-alert-danger', 'Ошибка во время создания объявления');
-        }
-    })
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: textContent, end: textDate })
+        }).then(res => {
+            if (res.ok) {
+                showAlert('uk-alert-primary', 'Объявление создано успешно');
+                showTexts();
+            } else {
+                showAlert('uk-alert-danger', 'Ошибка во время создания объявления');
+            }
+        })
         .catch(er => {
             showAlert('uk-alert-danger', 'Ошибка во время создания объявления');
             console.error(er);
@@ -412,6 +420,23 @@ function fillTextDropdown(text) {
     };
 }
 
+function uploadFiles(albumId) {
+    let input = document.getElementById('file-upload');
+    let files = input.files;
+    console.log(files)
+    let url = new URL(`file/upload`, window.location.href);
+    let params = { id: albumId };
+    Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+    const formData = new FormData();
+    formData.append('files', input.files);
+    console.log(url);
+    fetch(url, {
+            method: 'POST',
+            body: formData,
+        })
+        .then(res => console.log(res));
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     loadPageElements();
-})
+});
