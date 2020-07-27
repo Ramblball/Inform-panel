@@ -445,9 +445,8 @@ function uploadFiles(albumId) {
 async function getFilesPromise(albumId) {
     let url = createUrlWithQuery('/file', { aid: albumId })
     try {
-        let res = fetch(url, {
-            method: 'GET',
-            body: { aid: albumId }
+        let res = await fetch(url, {
+            method: 'GET'
         });
         return await res.json();
     } catch (e) {
@@ -465,8 +464,37 @@ function createUrlWithQuery(baseUrl, queryObject) {
 function showFiles(albumId) {
     getFilesPromise(albumId)
         .then(files => {
+            let fileContainer = document.getElementById('mainField');
+            fileContainer.innerHTML = '';
+            if (files.length == 0)
+                return
+            fileContainer.setAttribute('uk-grid', '');
+            fileContainer.classList.add('uk-child-width-1-5');
+            files.forEach(file => {
+                let fileDom = createFileDom(albumId,
+                    ъ\ file);
+                fileContainer.appendChild(fileDom);
+            });
             console.log(files);
         });
+}
+
+function createFileDom(albumId, file) {
+    let fileDom = document.createElement('div');
+    fileDom.setAttribute('id', `file_${file._id}`);
+    fileDom.setAttribute('class', 'uk-card uk-card-body');
+    let fileContentDom = null;
+    if (file.type) {
+        fileContentDom = document.createElement('img');
+        fileContentDom.setAttribute('uk-img', '');
+    } else {
+        fileContentDom = document.createElement('video');
+        fileContentDom.setAttribute('uk-video', '');
+
+    }
+    fileContentDom.setAttribute('src', `/static/${file.name}`);
+    fileDom.appendChild(fileContentDom);
+    return fileDom;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
