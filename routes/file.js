@@ -18,7 +18,7 @@ const getType = ext => {
 }
 
 const sendFiles = (req, res, next) => {
-    Album.findOne({ _id: req.params._id, user: req.user._id }, (err, album) => {
+    Album.findOne({ _id: req.query.aid, user: req.user._id }, (err, album) => {
         if (err !== null)
             next(err);
         if (album === undefined)
@@ -30,7 +30,7 @@ const sendFiles = (req, res, next) => {
 router.get('/', (req, res, next) => {
     if (req.user._id === undefined)
         next(createError(401));
-    else if (req.body.aid === undefined)
+    else if (req.query.aid === undefined)
         next(createError(400));
     else
         next();
@@ -85,13 +85,13 @@ router.post('/upload', (req, res, next) => {
 });
 
 router.put('/update', (req, res, next) => {
-    Album.findOne({ _id: req.body.aid, user: req.user._id }, (err, album) => {
+    Album.findOne({ _id: req.query.aid, user: req.user._id }, (err, album) => {
         if (err !== null)
             next(err);
         else if (album === undefined)
             next(createError(404));
         else {
-            let file = album.file.id(req.body.fid);
+            let file = album.file.id(req.query.fid);
             Object.assign(file, req.body).save(err => {
                 if (err !== null)
                     next(err.errors);
@@ -104,13 +104,13 @@ router.put('/update', (req, res, next) => {
 }, sendFiles);
 
 router.delete('/remove', (req, res, next) => {
-    Album.findOne({ _id: req.body.aid, user: req.user._id }, (err, album) => {
+    Album.findOne({ _id: req.query.aid, user: req.user._id }, (err, album) => {
         if (err !== null)
             next(err);
         else if (album === undefined)
             next(createError(404));
         else {
-            album.file.id(req.body.fid).remove();
+            album.file.id(req.query.fid).remove();
             album.save(err => {
                 if (err !== null)
                     next(err.errors);
