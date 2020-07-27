@@ -32,37 +32,43 @@ router.get('/', (req, res, next) => {
         next(createError(401));
     else if (req.body.aid === undefined)
         next(createError(400));
-    else 
+    else
         next();
 }, sendFiles);
 
 router.post('/upload', (req, res, next) => {
+    console.log(req);
     if (req.files === undefined) {
         next({
             status: 400,
             message: 'No file uploaded'
         });
     } else {
-        Album.findOne({ _id: req.params.id, user: req.user._id }, (err, album) => {
+        Album.findOne({ _id: req.query.id, user: req.user._id }, (err, album) => {
             if (err !== null)
                 next(err);
-            else if (album === undefined)
+            else if (album === null)
                 next(createError(404));
             else {
-                _.forEach(_.keysIn(req.files.files), key => {
-                    let file = req.files.files[key];
+                let files = _.isArray(req.files.files)
+                    ? req.files.files
+                    : req.files;
+
+                console.log(files);
+                _.forEach(_.keysIn(files), key => {
+                    let file = files[key];
                     let ext = path.extname(file.name).toLowerCase();
                     let type = getType(ext);
                     if (type === undefined)
                         return;
                     let name = uuid.v4() + '.' + ext
-                    album.file.push(new File({
+                    album.file.push({
                         name: name,
                         type: type,
 
                         position: album.file.length + 1,
                         created: Date.now()
-                    }));
+                    });
 
                     file.mv(path.join(__dirname, '..', 'upload', name));
                 });
@@ -108,7 +114,7 @@ router.delete('/remove', (req, res, next) => {
             album.save(err => {
                 if (err !== null)
                     next(err.errors);
-                else 
+                else
                     next();
             })
         }
