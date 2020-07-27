@@ -437,6 +437,14 @@ function uploadFiles(albumId) {
         .then(res => console.log(res));
 }
 
+function getFilesPromise(albumId) {
+
+}
+
+function showFiles(albumId) {
+
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     loadPageElements();
 });
