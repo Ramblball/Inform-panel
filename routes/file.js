@@ -6,7 +6,6 @@ const createError = require('http-errors');
 const uuid = require('uuid');
 
 const Album = require('../models/album');
-const File = require('../models/file');
 
 const getType = ext => {
     const fotoTypes = /jpg|png|bmp|jpeg/;
@@ -21,9 +20,9 @@ const sendFiles = (req, res, next) => {
     Album.findOne({ _id: req.query.aid, user: req.user._id }, (err, album) => {
         if (err !== null)
             next(err);
-        if (album === undefined)
+        if (album === null)
             next(createError(404));
-        res.status(200).send(album)
+        res.status(200).send(album.file)
     });
 }
 
