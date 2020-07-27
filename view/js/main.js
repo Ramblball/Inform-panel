@@ -99,6 +99,9 @@ function createAlbumDom(album) {
     albumDom.appendChild(albumCard);
     let albumDropdown = createAlbumDropdown(album);
     albumDom.innerHTML += (albumDropdown);
+    albumDom.ondblclick = () => {
+        showFiles(album._id);
+    };
     return albumDom;
 }
 
@@ -423,26 +426,46 @@ function fillTextDropdown(text) {
 function uploadFiles(albumId) {
     let input = document.getElementById('file-upload');
     let files = input.files;
-    console.log(files)
     let url = new URL(`file/upload`, window.location.href);
     let params = { id: albumId };
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
     const formData = new FormData();
-    formData.append('files', input.files);
-    console.log(url);
+    Array.from(files).forEach(file => {
+        console.log(file)
+        formData.append("files", file);
+    });
+    console.log(formData);
     fetch(url, {
             method: 'POST',
-            body: formData,
+            body: formData
         })
         .then(res => console.log(res));
 }
 
-function getFilesPromise(albumId) {
+async function getFilesPromise(albumId) {
+    try {
+        let res = fetch('/file', {
+            method: 'GET',
+            body: { aid: albumId }
+        });
+        return await res.json();
+    } catch (e) {
+        throw e;
+    }
+}
 
+function createUrlWithQuery(queryObject) {
+    let url = new URL(`file/upload`, window.location.href);
+    let params = queryObject;
+    Object.keys(params).forEach(key => url.searchParams.append(key, queryObject[key]));
+    return url;
 }
 
 function showFiles(albumId) {
-
+    getFilesPromise(albumId)
+        .then(files => {
+            console.log(files);
+        });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
