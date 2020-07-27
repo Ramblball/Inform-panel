@@ -443,8 +443,9 @@ function uploadFiles(albumId) {
 }
 
 async function getFilesPromise(albumId) {
+    let url = createUrlWithQuery('/file', { aid: albumId })
     try {
-        let res = fetch('/file', {
+        let res = fetch(url, {
             method: 'GET',
             body: { aid: albumId }
         });
@@ -454,8 +455,8 @@ async function getFilesPromise(albumId) {
     }
 }
 
-function createUrlWithQuery(queryObject) {
-    let url = new URL(`file/upload`, window.location.href);
+function createUrlWithQuery(baseUrl, queryObject) {
+    let url = new URL(baseUrl, window.location.href);
     let params = queryObject;
     Object.keys(params).forEach(key => url.searchParams.append(key, queryObject[key]));
     return url;
