@@ -5,7 +5,9 @@ const album = require('./album');
 const text = require('./text');
 const file = require('./file');
 const user = require('./users');
+const panel = require('./panel');
 
+router.use('/panel', panel);
 router.use('/', auth);
 
 router.use('/', (req, res, next) => {
