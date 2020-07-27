@@ -16,8 +16,9 @@ const router = require('./routes/router');
 
 const app = express();
 
-app.use('/static', express.static(path.join(__dirname, 'view')));
-app.use('/static', express.static(path.join(__dirname, 'public')));
+app.use('/static', express.static('view'));
+app.use('/static', express.static('public'));
+app.use('/static', express.static('upload'));
 
 if (config.util.getEnv('NODE_ENV') !== 'test')
     app.use(morgan('dev'));
