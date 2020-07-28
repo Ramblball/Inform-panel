@@ -11,14 +11,14 @@ const Text = require('../models/text');
  * @apiName GetPanelPage
  * @apiGroup Panel
  * 
- * @apiSuccess (200) {File} body Panel page
+ * @apiSuccess (200) {File} text Panel page
  * @apiError (404) {Object} status File not found
 */
 router.get('/', (req, res, next) => {
     try {
         res.sendFile(path.join(__dirname, '..', 'view', 'html', 'panel.html'));
     } catch (error) {
-        next(createError(404, error));
+        next(createError(404, 'File not found'));
     }
 });
 
@@ -28,15 +28,12 @@ router.get('/', (req, res, next) => {
  * @apiGroup Panel
  * 
  * @apiSuccess (200) {Object[]} body Albums array
- * @apiError (404) {Object} status Albums not found
  * @apiError (500) {Object} status Server error
 */
 router.get('/album', (req, res, next) => {
     Album.find({ hide: false }, 'comment file', (err, albums) => {
         if (err !== null)
             next(createError(500, err));
-        else if (albums === null)
-            next(createError(404));
         else
             res.status(200).send(albums);
     });
@@ -48,15 +45,12 @@ router.get('/album', (req, res, next) => {
  * @apiGroup Panel
  * 
  * @apiSuccess (200) {Object[]} body Texts array
- * @apiError (404) {Object} status Texts not found
  * @apiError (500) {Object} status Server error
 */
 router.get('/text', (req, res, next) => {
     Text.find({ hide: false }, 'text', (err, text) => {
         if (err !== null)
             next(createError(500, err));
-        else if (text === null)
-            next(createError(404));
         else
             res.status(200).send(text)
     });
