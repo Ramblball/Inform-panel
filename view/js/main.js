@@ -99,9 +99,6 @@ function createAlbumDom(album) {
     albumDom.appendChild(albumCard);
     let albumDropdown = createAlbumDropdown(album);
     albumDom.innerHTML += (albumDropdown);
-    albumDom.ondblclick = () => {
-        showFiles(album._id);
-    };
     return albumDom;
 }
 
@@ -111,29 +108,32 @@ function fillAlbumDropdown(album) {
         UIkit.dropdown(drop).hide();
     };
     drop.querySelector('.uk-nav>li:nth-child(4) > a:nth-child(1)').onclick = () => {
+        showFiles(album._id);
+    }
+    drop.querySelector('.uk-nav>li:nth-child(5) > a:nth-child(1)').onclick = () => {
         let input = document.getElementById('file-upload');
         input.onchange = () => {
             uploadFiles(album._id);
         };
         input.click();
     };
-    drop.querySelector('.uk-nav>li:nth-child(5) > a:nth-child(1)').onclick = () => {
+    drop.querySelector('.uk-nav>li:nth-child(6) > a:nth-child(1)').onclick = () => {
         fillChangeObjectModal('text', 'name', album, 'album', showAlbums, 'Название альбома изменена',
             'Ошибка во время изменения названия альбома');
     };
-    drop.querySelector('.uk-nav>li:nth-child(6) > a:nth-child(1)').onclick = () => {
+    drop.querySelector('.uk-nav>li:nth-child(7) > a:nth-child(1)').onclick = () => {
         fillChangeObjectModal('text', 'comment', album, 'album', showAlbums, 'Комментарий альбома изменена',
             'Ошибка во время изменения комментария альбома');
     };
-    drop.querySelector('.uk-nav>li:nth-child(7) > a:nth-child(1)').onclick = () => {
+    drop.querySelector('.uk-nav>li:nth-child(8) > a:nth-child(1)').onclick = () => {
         fillChangeObjectModal('date', 'end', album, 'album', showAlbums, 'Дата удаления альбома изменена',
             'Ошибка во время изменения даты удаления альбома');
     };
-    drop.querySelector('.uk-nav>li:nth-child(8) > a:nth-child(1)').onclick = () => {
+    drop.querySelector('.uk-nav>li:nth-child(9) > a:nth-child(1)').onclick = () => {
         updateObject(album._id, { hide: !album.hide }, 'album', showAlbums, 'Видимость альбома изменена',
             'Ошибка во время изменения видимости альбома');
     };
-    drop.querySelector('.uk-nav>li:nth-child(9)>a:nth-child(1)').onclick = () => {
+    drop.querySelector('.uk-nav>li:nth-child(10)>a:nth-child(1)').onclick = () => {
         removeObject('album', album._id, showAlbums, `Альбом "${album.name}" успешно удален`,
             'Ошибка во время удаления альбома');
     };
@@ -298,6 +298,7 @@ function createAlbumDropdown(album) {
                 <li>${album.name}</li>
                 <li>${album.comment}</li>
                 <li class="uk-nav-divider"></li>
+                <li><a>Открыть</a></li>
                 <li><a href='#'>Добавить файл</a></li>
                 <li><a href='#'>Изменить название</a></li>
                 <li><a href='#'>Изменить комментарий</a></li>
@@ -431,7 +432,6 @@ function uploadFiles(albumId) {
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
     const formData = new FormData();
     Array.from(files).forEach(file => {
-        console.log(file)
         formData.append("files", file);
     });
     console.log(formData);
@@ -466,20 +466,21 @@ function showFiles(albumId) {
         .then(files => {
             let fileContainer = document.getElementById('mainField');
             fileContainer.innerHTML = '';
-            if (files.length == 0)
-                return
+            if (files.length == 0) {
+                showAlbums();
+                return;
+            }
             fileContainer.setAttribute('uk-grid', '');
             fileContainer.classList.add('uk-child-width-1-5');
             files.forEach(file => {
-                let fileDom = createFileDom(albumId,
-                    ъ\ file);
+                let fileDom = createFileDom(file);
                 fileContainer.appendChild(fileDom);
+                fillFileDropdown(file, albumId);
             });
-            console.log(files);
         });
 }
 
-function createFileDom(albumId, file) {
+function createFileDom(file) {
     let fileDom = document.createElement('div');
     fileDom.setAttribute('id', `file_${file._id}`);
     fileDom.setAttribute('class', 'uk-card uk-card-body');
@@ -489,12 +490,50 @@ function createFileDom(albumId, file) {
         fileContentDom.setAttribute('uk-img', '');
     } else {
         fileContentDom = document.createElement('video');
-        fileContentDom.setAttribute('uk-video', '');
-
+        fileContentDom.setAttribute('uk-video', 'autoplay: false');
+        fileContentDom.setAttribute('controls', '');
+        fileContentDom.setAttribute('playsinline', '');
     }
     fileContentDom.setAttribute('src', `/static/${file.name}`);
     fileDom.appendChild(fileContentDom);
+    fileDom.innerHTML += createFileDropdown(file);
     return fileDom;
+}
+
+function createFileDropdown(file) {
+    const markup = `
+        <div uk-dropdown='delay-hide: 100' id='drop_${file._id}'>
+            <ul class='uk-nav uk-dropdown-nav'>
+                <li><a href='#'>Открыть</a></li>
+                <li><a href='#'>Изменить комментарий</a></li>
+                <li><a href='#'>${file.hide ? 'Показать' : 'Скрыть'}</a></li>
+                <li><a href='#'>Удалить</a></li>
+            </ul>
+        </div>
+    `
+    return markup.replace(/\s{2,}/g, '');
+}
+
+function fillFileDropdown(file, albumId) {
+    let drop = document.getElementById(`file_${file._id}`);
+    drop.onclick = () => {
+        UIkit.dropdown(drop).hide();
+    };
+    drop.querySelector('.uk-nav>li:nth-child(1) > a:nth-child(1)').onclick = () => {
+        console.log('Показываю')
+    };
+    drop.querySelector('.uk-nav>li:nth-child(2) > a:nth-child(1)').onclick = () => {
+        fillChangeObjectModal('text', 'comment', file, 'file', () => showFiles(albumId), 'Комментарий файла изменена',
+            'Ошибка во время изменения комментария файла');
+    };
+    drop.querySelector('.uk-nav>li:nth-child(3) > a:nth-child(1)').onclick = () => {
+        updateObject(file._id, { hide: !file.hide }, 'file', () => showFiles(albumId), 'Видимость файла изменена',
+            'Ошибка во время изменения видимости файла');
+    };
+    drop.querySelector('.uk-nav>li:nth-child(4)>a:nth-child(1)').onclick = () => {
+        removeObject('file', file._id, () => showFiles(albumId), 'Файл успешно удален',
+            'Ошибка во время удаления файла');
+    };
 }
 
 document.addEventListener('DOMContentLoaded', () => {
