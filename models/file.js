@@ -6,7 +6,7 @@ const fileSchema = new Schema({
     type: { type: Boolean, required: true },
 
     hide: { type: Boolean, required: true, default: false },
-    comment: { type: String, requried: false },
+    comment: { type: String, maxlength: 256, requried: false },
     position: { type: Number, required: true },
 
     created: { type: Number, required: true }

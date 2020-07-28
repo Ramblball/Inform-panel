@@ -7,6 +7,13 @@ const uuid = require('uuid');
 
 const Album = require('../models/album');
 
+/**
+ * Separates files into photo and video by extension
+ * @param {String} ext File extension
+ * @returns {Boolean} true - foto
+ * @returns {Boolean} false - video
+ * @returns {undefined} undefined - unknown format
+ */
 const getType = ext => {
     const fotoTypes = /jpg|png|bmp|jpeg/;
     const videoTypes = /gif|mp4|avi|wmv|mov|mkv/;
@@ -26,15 +33,36 @@ const sendFiles = (req, res, next) => {
     });
 }
 
-router.get('/', (req, res, next) => {
-    if (req.user._id === undefined)
-        next(createError(401));
-    else if (req.query.aid === undefined)
-        next(createError(400));
-    else
-        next();
-}, sendFiles);
+/**
+ * @api {get} /file/:id Request files
+ * @apiName GetFiles
+ * @apiGroup File
+ * 
+ * @apiParam {ObjectId} id Album id
+ * 
+ * @apiPermission Autorized
+ * 
+ * @apiSuccess (200) {Object[]} body Files array
+ * 
+ * @apiError (500) {Number} status Server error
+*/
+router.get('/', sendFiles);
 
+/**
+ * @api {post} /upload Uplaoad files
+ * @apiName UploadFiles
+ * @apiGroup File
+ * 
+ * @apiParam {ObjectId} id Album id
+ * 
+ * @apiPermission Autorized
+ * 
+ * @apiSuccess (200) {Object[]} body Files array
+ * 
+ * @apiError (400) {Number} status Invalid request
+ * @apiError (404) {Number} status Album not found
+ * @apiError (500) {Number} status Server error
+*/
 router.post('/upload', (req, res, next) => {
     console.log(req);
     if (req.files === undefined) {
@@ -45,7 +73,7 @@ router.post('/upload', (req, res, next) => {
     } else {
         Album.findOne({ _id: req.query.id, user: req.user._id }, (err, album) => {
             if (err !== null)
-                next(err);
+                next(createError(500, err));
             else if (album === null)
                 next(createError(404));
             else {
@@ -74,7 +102,7 @@ router.post('/upload', (req, res, next) => {
 
                 album.save(err => {
                     if (err !== null)
-                        next(err.errors);
+                        next(createError(400, err.errors));
                     else
                         res.status(200).end();
                 });
@@ -83,17 +111,38 @@ router.post('/upload', (req, res, next) => {
     }
 });
 
+/**
+ * @api {put} /update/:aid:fid Update file
+ * @apiName UpdateFile
+ * @apiGroup File
+ * 
+ * @apiParam {ObjectId} aid Album Id
+ * @apiParam {ObjectId} fid File Id
+ * @apiParam {String{..256}} [comment]
+ * @apiParam {Boolean} [hide]
+ * @apiParam {Number} [position]
+ * 
+ * @apiPermission Autorized
+ * 
+ * @apiSuccess (200) {Object[]} body Files array
+ * 
+ * @apiError (400) {Number} status Invalid request
+ * @apiError (404) {Number} status Album or file not found
+ * @apiError (500) {Number} status Server error
+*/
 router.put('/update', (req, res, next) => {
     Album.findOne({ _id: req.query.aid, user: req.user._id }, (err, album) => {
         if (err !== null)
-            next(err);
+            next(createError(500, err));
         else if (album === undefined)
             next(createError(404));
         else {
             let file = album.file.id(req.query.fid);
+            if (file === undefined)
+                next(createError(404));
             Object.assign(file, req.body).save(err => {
                 if (err !== null)
-                    next(err.errors);
+                    next(createError(400, err.errors));
                 else
                     next();
             });
@@ -102,6 +151,21 @@ router.put('/update', (req, res, next) => {
     });
 }, sendFiles);
 
+/**
+ * @api {delete} /remove/:aid:fid Remove file
+ * @apiName RemoveFile
+ * @apiGroup File
+ * 
+ * @apiParam {ObjectId} aid Album Id
+ * @apiParam {ObjectId} fid File Id
+ * 
+ * @apiPermission Autorized
+ * 
+ * @apiSuccess (200) {Object[]} body Files array
+ * 
+ * @apiError (404) {Number} status Album or file not found
+ * @apiError (500) {Number} status Server error
+*/
 router.delete('/remove', (req, res, next) => {
     Album.findOne({ _id: req.query.aid, user: req.user._id }, (err, album) => {
         if (err !== null)
@@ -112,10 +176,10 @@ router.delete('/remove', (req, res, next) => {
             album.file.id(req.query.fid).remove();
             album.save(err => {
                 if (err !== null)
-                    next(err.errors);
+                    next(createError(500, err.errors));
                 else
                     next();
-            })
+            });
         }
     });
 }, sendFiles)

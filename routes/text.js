@@ -11,8 +11,35 @@ const textSender = (req, res, next) => {
     });
 }
 
+/**
+ * @api {get} /text Request texts
+ * @apiName GetTexts
+ * @apiGroup Text
+ * 
+ * @apiPermission Autorized
+ * 
+ * @apiSuccess (200) {Object[]} body Texts array
+ * 
+ * @apiError (500) {Number} status Server error
+*/
 router.get('/', textSender);
 
+/**
+ * @api {post} /create Create new text
+ * @apiName CreateText
+ * @apiGroup Text
+ * 
+ * @apiParam {String{..512}} text
+ * @apiParam {Boolean} [hide=false]
+ * @apiParam {Number} end Date in milliseconds
+ * 
+ * @apiPermission Autorized
+ * 
+ * @apiSuccess (200) {Object[]} body Texts array
+ * 
+ * @apiError (400) {Number} status Invalid request
+ * @apiError (500) {Number} status Server error
+*/
 router.post('/create', (req, res, next) => {
     const data = req.body;
     data.user = req.user._id;
@@ -27,6 +54,24 @@ router.post('/create', (req, res, next) => {
     });
 }, textSender);
 
+/**
+ * @api {put} /update/:id Update text
+ * @apiName UpdateText
+ * @apiGroup Text
+ * 
+ * @apiParam {ObjectId} id text Id
+ * @apiParam {String{..512}} [text]
+ * @apiParam {Boolean} [hide]
+ * @apiParam {Number} [end] Date in milliseconds
+ * 
+ * @apiPermission Autorized
+ * 
+ * @apiSuccess (200) {Object[]} body Texts array
+ * 
+ * @apiError (400) {Number} status Invalid request
+ * @apiError (404) {Number} status Text not found
+ * @apiError (500) {Number} status Server error
+*/
 router.put('/update', (req, res, next) => {
     Text.findOne({ _id: req.query.id, user: req.user._id }, (err, text) => {
         if (err !== null)
@@ -42,6 +87,20 @@ router.put('/update', (req, res, next) => {
     });
 }, textSender);
 
+/**
+ * @api {delete} /remove/:id Remove text
+ * @apiName RemoveText
+ * @apiGroup Text
+ * 
+ * @apiParam {ObjectId} id Text Id
+ * 
+ * @apiPermission Autorized
+ * 
+ * @apiSuccess (200) {Object[]} body Text array
+ * 
+ * @apiError (404) {Number} status Text not found
+ * @apiError (500) {Number} status Server error
+*/
 router.delete('/remove', (req, res, next) => {
     Text.deleteOne({ _id: req.query.id, user: req.user._id }, (err, text) => {
         if (err !== null)
