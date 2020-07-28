@@ -7,12 +7,13 @@ const Album = require('../models/album');
 const Text = require('../models/text');
 
 /**
- * @api {get} /panel/ Request panel page
+ * @api {get} /panel Request panel page
  * @apiName GetPanelPage
  * @apiGroup Panel
  * 
- * @apiSuccess (200) {File} text Panel page
- * @apiError (404) {Object} status File not found
+ * @apiSuccess (200) {String} text Panel page
+ * 
+ * @apiError (404) {Number} status File not found
 */
 router.get('/', (req, res, next) => {
     try {
@@ -28,7 +29,8 @@ router.get('/', (req, res, next) => {
  * @apiGroup Panel
  * 
  * @apiSuccess (200) {Object[]} body Albums array
- * @apiError (500) {Object} status Server error
+ * 
+ * @apiError (500) {Number} status Server error
 */
 router.get('/album', (req, res, next) => {
     Album.find({ hide: false }, 'comment file', (err, albums) => {
@@ -45,7 +47,8 @@ router.get('/album', (req, res, next) => {
  * @apiGroup Panel
  * 
  * @apiSuccess (200) {Object[]} body Texts array
- * @apiError (500) {Object} status Server error
+ * 
+ * @apiError (500) {Number} status Server error
 */
 router.get('/text', (req, res, next) => {
     Text.find({ hide: false }, 'text', (err, text) => {
