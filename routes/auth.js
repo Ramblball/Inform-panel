@@ -4,6 +4,26 @@ const passport = require('../packages/passport');
 const path = require('path');
 const User = require('../models/user');
 
+/**
+ * @api {post} /auth Registrate new user
+ * @apiName RegistrateUser
+ * @apiGroup Auth
+ * 
+ * @apiParam {Boolean} [status=false]
+ * @apiParam {String} login
+ * @apiParam {Object} name
+ * @apiParam {String{..32}} name[first]
+ * @apiParam {String{..32}} name[last]
+ * @apiParam {String{..32}} [name[patronomic]]
+ * @apiParam {String} password
+ * 
+ * @apiPermission Autorized
+ * @apiPermission Admin
+ * 
+ * @apiSuccess (200) status User created
+ * 
+ * @apiError (400) {Number} status Invalid request
+*/
 router.post('/auth', (req, res, next) => {
 	const data = req.body;
 	const pass = data.password;
@@ -12,13 +32,13 @@ router.post('/auth', (req, res, next) => {
 			errors: {
 				password: {
 					properties: {
-					  message: 'Path `password` is required.',
-					  type: 'required',
-					  path: 'password'
+						message: 'Path `password` is required.',
+						type: 'required',
+						path: 'password'
 					},
 					kind: 'required',
 					path: 'password'
-				  }
+				}
 			}
 		}));
 	}
@@ -35,14 +55,49 @@ router.post('/auth', (req, res, next) => {
 	})
 });
 
+/**
+ * @api {get} /login Request login page
+ * @apiName GetLoginPage
+ * @apiGroup Auth
+ * 
+ * @apiSuccess (200) {String} text Login page
+ * 
+ * @apiError (404) {Number} status File not found
+*/
 router.get('/login', (req, res, next) => {
-	res.status(200).sendFile(path.join(__dirname, '..', 'view', 'html', 'login.html'));
-  });
+	try {
+		res.status(200).sendFile(path.join(__dirname, '..', 'view', 'html', 'login.html'));
+	} catch (error) {
+		next(createError(404, 'File not found'));
+	}
+});
 
+/**
+* @api {post} /login Authenticate User
+* @apiName AuthenticateUser
+* @apiGroup Auth
+* 
+* @apiParam {String} login
+* @apiParam {String} password
+* 
+* @apiSuccess (302) redirect Redirect to /
+
+* @apiError (401) {Number} status Unautorized
+*/
 router.post('/login', passport.authenticate('local', {
 	successRedirect: '/'
 }));
 
+/**
+* @api {get} /logout Registrate new user
+* @apiName LogoutUser
+* @apiGroup Auth
+* 
+* @apiParam {String} login
+* @apiParam {String} password
+* 
+* @apiSuccess (302) redirect Redirect to /login
+*/
 router.get('/logout', (req, res) => {
 	req.logOut();
 	res.redirect('/login');
