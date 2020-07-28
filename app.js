@@ -19,6 +19,7 @@ const app = express();
 app.use('/static', express.static('view'));
 app.use('/static', express.static('public'));
 app.use('/static', express.static('upload'));
+app.use('/api', express.static('doc'));
 
 if (config.util.getEnv('NODE_ENV') !== 'test')
     app.use(morgan('dev'));

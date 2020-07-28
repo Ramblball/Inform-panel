@@ -69,3 +69,6 @@ config/
 
 # uploaded files
 upload/
+
+#web-api
+doc/
