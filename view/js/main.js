@@ -45,12 +45,12 @@ function createNewAlbum() {
     let albumComment = document.getElementById('newAlbumComment').value;
     let albumDate = new Date(document.getElementById('newAlbumDate').value).getTime();
     fetch('/album/create', {
-            method: 'POST',
-            body: JSON.stringify({ name: albumName, comment: albumComment, end: albumDate }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+        method: 'POST',
+        body: JSON.stringify({name: albumName, comment: albumComment, end: albumDate}),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
         .then(res => {
             if (res.ok) {
                 showAlert('uk-alert-primary', 'Альбом создан успешно');
@@ -74,7 +74,7 @@ function showAlbums() {
         .then(albums => {
             let albumContainer = document.getElementById('mainField');
             albumContainer.innerHTML = '';
-            if (albums.length == 0)
+            if (albums.length === 0)
                 return
             albumContainer.setAttribute('uk-grid', '');
             albumContainer.classList.add('uk-child-width-1-5');
@@ -91,10 +91,7 @@ function createAlbumDom(album) {
     albumDom.setAttribute('id', `album_${album._id}`);
     let albumCard = document.createElement('div');
     albumCard.setAttribute('class', 'uk-card uk-card-body');
-    if (album.hide)
-        albumCard.classList.add('uk-card-secondary');
-    else
-        albumCard.classList.add('uk-card-default');
+    albumCard.classList.add(album.hide ? 'uk-card-secondary' : 'uk-card-default');
     albumCard.textContent = album.name;
     albumDom.appendChild(albumCard);
     let albumDropdown = createAlbumDropdown(album);
@@ -130,7 +127,7 @@ function fillAlbumDropdown(album) {
             'Ошибка во время изменения даты удаления альбома');
     };
     drop.querySelector('.uk-nav>li:nth-child(9) > a:nth-child(1)').onclick = () => {
-        updateObject(album._id, { hide: !album.hide }, 'album', showAlbums, 'Видимость альбома изменена',
+        updateObject(album._id, {hide: !album.hide}, 'album', showAlbums, 'Видимость альбома изменена',
             'Ошибка во время изменения видимости альбома');
     };
     drop.querySelector('.uk-nav>li:nth-child(10)>a:nth-child(1)').onclick = () => {
@@ -154,7 +151,7 @@ function formatDate(date) {
 }
 
 function fillChangeObjectModal(changeType, changeKey, originalObject, baseUrl,
-    successFunction, successMessage, errorMessage) {
+                               successFunction, successMessage, errorMessage) {
     let modal = document.getElementById('change-object-modal');
     let changeDom = null;
     switch (changeType) {
@@ -189,7 +186,7 @@ function fillChangeObjectModal(changeType, changeKey, originalObject, baseUrl,
         prevValue = formatDate(prevValue);
     changeDom.value = prevValue;
     let previousChangedDom = modal.querySelector('div:nth-child(1) > div:nth-child(2)').childNodes[3];
-    if (typeof(previousChangedDom) != 'undefined' && previousChangedDom != null)
+    if (typeof (previousChangedDom) != 'undefined' && previousChangedDom != null)
         modal.querySelector('div:nth-child(1) > div:nth-child(2)').removeChild(previousChangedDom);
     modal.querySelector('div:nth-child(1) > div:nth-child(2)').appendChild(changeDom);
     switch (changeKey) {
@@ -221,15 +218,15 @@ function fillChangeObjectModal(changeType, changeKey, originalObject, baseUrl,
 
 function updateObject(baseUrl, objId, data, successFunc, successMsg, errorMsg) {
     let url = new URL(`${baseUrl}/update`, window.location.href)
-    let params = { id: objId }
+    let params = {id: objId}
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
     fetch(url, {
-            method: 'PUT',
-            body: JSON.stringify(data),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
         .then(res => {
             if (!(res.ok))
                 showAlert('uk-alert-danger', errorMsg);
@@ -246,11 +243,11 @@ function updateObject(baseUrl, objId, data, successFunc, successMsg, errorMsg) {
 
 function removeObject(baseUrl, objId, successFunc, successMsg, errorMsg) {
     let url = new URL(`${baseUrl}/remove`, window.location.href)
-    let params = { id: objId }
+    let params = {id: objId}
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
     fetch(url, {
-            method: 'DELETE'
-        })
+        method: 'DELETE'
+    })
         .then(res => {
             if (!(res.ok))
                 showAlert('uk-alert-danger', errorMsg);
@@ -324,17 +321,17 @@ function createNewText() {
     let textContent = document.getElementById('newTextContent').value;
     let textDate = new Date(document.getElementById('newTextDate').value).getTime();
     fetch('text/create', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: textContent, end: textDate })
-        }).then(res => {
-            if (res.ok) {
-                showAlert('uk-alert-primary', 'Объявление создано успешно');
-                showTexts();
-            } else {
-                showAlert('uk-alert-danger', 'Ошибка во время создания объявления');
-            }
-        })
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({text: textContent, end: textDate})
+    }).then(res => {
+        if (res.ok) {
+            showAlert('uk-alert-primary', 'Объявление создано успешно');
+            showTexts();
+        } else {
+            showAlert('uk-alert-danger', 'Ошибка во время создания объявления');
+        }
+    })
         .catch(er => {
             showAlert('uk-alert-danger', 'Ошибка во время создания объявления');
             console.error(er);
@@ -415,7 +412,7 @@ function fillTextDropdown(text) {
             'Ошибка во время изменения даты удаления объявления');
     };
     drop.querySelector('.uk-nav>li:nth-child(3) > a:nth-child(1)').onclick = () => {
-        updateObject('text', text._id, { hide: !text.hide }, showTexts, 'Видимость объявления изменена',
+        updateObject('text', text._id, {hide: !text.hide}, showTexts, 'Видимость объявления изменена',
             'Ошибка во время изменения видимости объявления');
     };
     drop.querySelector('.uk-nav>li:nth-child(4)>a:nth-child(1)').onclick = () => {
@@ -428,7 +425,7 @@ function uploadFiles(albumId) {
     let input = document.getElementById('file-upload');
     let files = input.files;
     let url = new URL(`file/upload`, window.location.href);
-    let params = { id: albumId };
+    let params = {id: albumId};
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
     const formData = new FormData();
     Array.from(files).forEach(file => {
@@ -436,14 +433,14 @@ function uploadFiles(albumId) {
     });
     console.log(formData);
     fetch(url, {
-            method: 'POST',
-            body: formData
-        })
+        method: 'POST',
+        body: formData
+    })
         .then(res => console.log(res));
 }
 
 async function getFilesPromise(albumId) {
-    let url = createUrlWithQuery('/file', { aid: albumId })
+    let url = createUrlWithQuery('/file', {aid: albumId})
     try {
         let res = await fetch(url, {
             method: 'GET'
@@ -527,7 +524,7 @@ function fillFileDropdown(file, albumId) {
             'Ошибка во время изменения комментария файла');
     };
     drop.querySelector('.uk-nav>li:nth-child(3) > a:nth-child(1)').onclick = () => {
-        updateObject(file._id, { hide: !file.hide }, 'file', () => showFiles(albumId), 'Видимость файла изменена',
+        updateObject(file._id, {hide: !file.hide}, 'file', () => showFiles(albumId), 'Видимость файла изменена',
             'Ошибка во время изменения видимости файла');
     };
     drop.querySelector('.uk-nav>li:nth-child(4)>a:nth-child(1)').onclick = () => {
