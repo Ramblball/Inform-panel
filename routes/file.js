@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 const createError = require('http-errors');
@@ -64,7 +65,6 @@ router.get('/', sendFiles);
  * @apiError (500) {Number} status Server error
 */
 router.post('/upload', (req, res, next) => {
-    console.log(req);
     if (req.files === undefined) {
         next({
             status: 400,
@@ -81,7 +81,6 @@ router.post('/upload', (req, res, next) => {
                     ? req.files.files
                     : req.files;
 
-                console.log(files);
                 _.forEach(_.keysIn(files), key => {
                     let file = files[key];
                     let ext = path.extname(file.name).toLowerCase();
@@ -173,7 +172,9 @@ router.delete('/remove', (req, res, next) => {
         else if (album === undefined)
             next(createError(404));
         else {
-            album.file.id(req.query.fid).remove();
+            let file = album.file.id(req.query.fid);
+            fs.unlinkSync(path.join(__dirname, '..', 'upload', file.name), (err) => {});
+            file.remove();
             album.save(err => {
                 if (err !== null)
                     next(createError(500, err.errors));
