@@ -109,16 +109,20 @@ router.put('/update', (req, res, next) => {
  * @apiError (500) {Number} status Server error
 */
 router.delete('/remove', (req, res, next) => {
-    Album.deleteOne({ _id: req.query.id, user: req.user._id }, (err, album) => {
+    Album.findOne({ _id: req.query.id, user: req.user._id }, (err, album) => {
         if (err !== null)
-            next(err);
-        else if (album === undefined)
+            next(createError(500, err));
+        else if (album === null)
             next(createError(404));
         else {
-            _.forEach(album.file, file => {
-                fs.unlink(path.join(__dirname, '..', 'upload', file.name));
+            album.remove(err => {
+                if (err !== null)
+                    next(createError(500, err));
+                _.forEach(album.file, file => {
+                    fs.unlink(path.join(__dirname, '..', 'upload', file.name), (err) => {});
+                });
+                next();
             });
-            next();
         }
     });
 }, sendAlbums);
