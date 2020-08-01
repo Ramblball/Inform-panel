@@ -67,12 +67,12 @@ router.get('/info', (req, res, next) => {
 */
 router.put('/update', (req, res, next) => {
   User.findById(req.user._id, (err, user) => {
-    if (err !== null) next(createError(500, err));
-    if (user === null) next(createError(404));
+    if (err) next(createError(500, err));
+    if (!user) next(createError(404));
     if (user.validPassword(req.body.old)) {
       user.setPssword(req.body.new);
       user.save(err => {
-        if (err !== null)
+        if (err)
           next(createError(400, err));
         res.sendStatus(200);
       });

@@ -8,10 +8,10 @@ const Album = require('../models/album');
 
 const sendAlbums = (req, res, next) => {
     Album.find({ user: req.user._id }, 'name comment hide end', (err, albums) => {
-        if (err === null)
-            res.send(albums);
-        else
+        if (err)
             next(createError(500, err));
+        else
+            res.send(albums);
     });
 }
 
@@ -52,7 +52,7 @@ router.post('/create', (req, res, next) => {
     const album = new Album(data);
 
     album.save(err => {
-        if (err !== null)
+        if (err)
             next(createError(400, err.errors));
         else
             next();
@@ -80,14 +80,13 @@ router.post('/create', (req, res, next) => {
  * @apiError (500) {Number} status Server error
 */
 router.put('/update', (req, res, next) => {
-    console.log(req.body)
     Album.findOne({ _id: req.query.id, user: req.user._id }, (err, album) => {
-        if (err !== null)
+        if (err)
             next(err);
-        if (album === undefined)
+        if (!album)
             next(createError(404));
         Object.assign(album, req.body).save(err => {
-            if (err !== null)
+            if (err)
                 next(createError(400, err.errors));
             next();
         });
@@ -110,16 +109,16 @@ router.put('/update', (req, res, next) => {
 */
 router.delete('/remove', (req, res, next) => {
     Album.findOne({ _id: req.query.id, user: req.user._id }, (err, album) => {
-        if (err !== null)
+        if (err)
             next(createError(500, err));
-        else if (album === null)
+        else if (!album)
             next(createError(404));
         else {
             album.remove(err => {
-                if (err !== null)
+                if (err)
                     next(createError(500, err));
                 _.forEach(album.file, file => {
-                    fs.unlink(path.join(__dirname, '..', 'upload', file.name), (err) => {});
+                    fs.unlink(path.join(__dirname, '..', 'upload', file.name), (err) => { });
                 });
                 next();
             });

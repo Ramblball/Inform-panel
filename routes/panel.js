@@ -34,7 +34,7 @@ router.get('/', (req, res, next) => {
 */
 router.get('/album', (req, res, next) => {
     Album.find({ hide: false }, 'comment file', (err, albums) => {
-        if (err !== null)
+        if (err)
             next(createError(500, err));
         else
             res.status(200).send(albums);
@@ -52,7 +52,7 @@ router.get('/album', (req, res, next) => {
 */
 router.get('/text', (req, res, next) => {
     Text.find({ hide: false }, 'text', (err, text) => {
-        if (err !== null)
+        if (err)
             next(createError(500, err));
         else
             res.status(200).send(text)

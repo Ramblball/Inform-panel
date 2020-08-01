@@ -26,9 +26,9 @@ const getType = ext => {
 
 const sendFiles = (req, res, next) => {
     Album.findOne({ _id: req.query.aid, user: req.user._id }, (err, album) => {
-        if (err !== null)
+        if (err)
             next(err);
-        if (album === null)
+        if (!album)
             next(createError(404));
         res.status(200).send(album.file)
     });
@@ -65,16 +65,16 @@ router.get('/', sendFiles);
  * @apiError (500) {Number} status Server error
 */
 router.post('/upload', (req, res, next) => {
-    if (req.files === undefined) {
+    if (!req.files) {
         next({
             status: 400,
             message: 'No file uploaded'
         });
     } else {
         Album.findOne({ _id: req.query.id, user: req.user._id }, (err, album) => {
-            if (err !== null)
+            if (err)
                 next(createError(500, err));
-            else if (album === null)
+            else if (!album)
                 next(createError(404));
             else {
                 let files = _.isArray(req.files.files)
@@ -100,7 +100,7 @@ router.post('/upload', (req, res, next) => {
                 });
 
                 album.save(err => {
-                    if (err !== null)
+                    if (err)
                         next(createError(400, err.errors));
                     else
                         res.status(200).end();
@@ -131,16 +131,16 @@ router.post('/upload', (req, res, next) => {
 */
 router.put('/update', (req, res, next) => {
     Album.findOne({ _id: req.query.aid, user: req.user._id }, (err, album) => {
-        if (err !== null)
+        if (err)
             next(createError(500, err));
-        else if (album === undefined)
+        else if (!album)
             next(createError(404));
         else {
             let file = album.file.id(req.query.fid);
-            if (file === undefined)
+            if (!file)
                 next(createError(404));
             Object.assign(file, req.body).save(err => {
-                if (err !== null)
+                if (err)
                     next(createError(400, err.errors));
                 else
                     next();
@@ -167,16 +167,16 @@ router.put('/update', (req, res, next) => {
 */
 router.delete('/remove', (req, res, next) => {
     Album.findOne({ _id: req.query.aid, user: req.user._id }, (err, album) => {
-        if (err !== null)
+        if (err)
             next(err);
-        else if (album === undefined)
+        else if (!album)
             next(createError(404));
         else {
             let file = album.file.id(req.query.fid);
             fs.unlinkSync(path.join(__dirname, '..', 'upload', file.name), (err) => {});
             file.remove();
             album.save(err => {
-                if (err !== null)
+                if (err)
                     next(createError(500, err.errors));
                 else
                     next();
