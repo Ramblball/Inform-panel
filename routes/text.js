@@ -4,7 +4,7 @@ const Text = require('../models/text');
 
 const textSender = (req, res, next) => {
     Text.find({ user: req.user._id }, 'text hide end', (err, texts) => {
-        if (err !== null)
+        if (err)
             next(createError(500, err));
         else
             res.status(200).send(texts);
@@ -47,7 +47,7 @@ router.post('/create', (req, res, next) => {
     const text = new Text(data);
 
     text.save(err => {
-        if (err !== null)
+        if (err)
             next(err.errors);
         else
             next();
@@ -74,12 +74,12 @@ router.post('/create', (req, res, next) => {
 */
 router.put('/update', (req, res, next) => {
     Text.findOne({ _id: req.query.id, user: req.user._id }, (err, text) => {
-        if (err !== null)
+        if (err)
             next(err);
-        else if (text === undefined)
+        else if (!text)
             next(createError(404));
         Object.assign(text, req.body).save(err => {
-            if (err !== null)
+            if (err)
                 next(createError(400, err.errors));
             else
                 next();
@@ -103,9 +103,9 @@ router.put('/update', (req, res, next) => {
 */
 router.delete('/remove', (req, res, next) => {
     Text.deleteOne({ _id: req.query.id, user: req.user._id }, (err, text) => {
-        if (err !== null)
+        if (err)
             next(err);
-        else if (text === undefined)
+        else if (!text)
             next(createError(404));
         else
             next();
