@@ -28,7 +28,7 @@ const sendFiles = (req, res, next) => {
     Album.findOne({ _id: req.query.aid, user: req.user._id }, (err, album) => {
         if (err)
             next(err);
-        if (!album)
+        if (album === null)
             next(createError(404));
         res.status(200).send(album.file)
     });
@@ -50,7 +50,7 @@ const sendFiles = (req, res, next) => {
 router.get('/', sendFiles);
 
 /**
- * @api {post} /upload Uplaoad files
+ * @api {post} /upload Upload files
  * @apiName UploadFiles
  * @apiGroup File
  * 
@@ -74,7 +74,7 @@ router.post('/upload', (req, res, next) => {
         Album.findOne({ _id: req.query.id, user: req.user._id }, (err, album) => {
             if (err)
                 next(createError(500, err));
-            else if (!album)
+            else if (album === null)
                 next(createError(404));
             else {
                 let files = _.isArray(req.files.files)
@@ -133,19 +133,25 @@ router.put('/update', (req, res, next) => {
     Album.findOne({ _id: req.query.aid, user: req.user._id }, (err, album) => {
         if (err)
             next(createError(500, err));
-        else if (!album)
+        else if (album === null)
             next(createError(404));
         else {
             let file = album.file.id(req.query.fid);
             if (!file)
                 next(createError(404));
-            Object.assign(file, req.body).save(err => {
+            file.set(req.body);
+            album.save(err => {
                 if (err)
                     next(createError(400, err.errors));
                 else
                     next();
             });
-
+            // Object.assign(file, req.body).save(err => {
+            //     if (err)
+            //         next(createError(400, err.errors));
+            //     else
+            //         next();
+            // });
         }
     });
 }, sendFiles);
@@ -169,7 +175,7 @@ router.delete('/remove', (req, res, next) => {
     Album.findOne({ _id: req.query.aid, user: req.user._id }, (err, album) => {
         if (err)
             next(err);
-        else if (!album)
+        else if (album === null)
             next(createError(404));
         else {
             let file = album.file.id(req.query.fid);
