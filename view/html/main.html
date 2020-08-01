@@ -22,13 +22,17 @@
             height: 100%;
             padding: 0;
         }
+
+        .file-hidden {
+            filter: blur(8px);
+        }
     </style>
 
     <nav class="uk-navbar-container" uk-navbar>
         <div class="uk-navbar-right">
             <ul class="uk-navbar-nav">
                 <li>
-                    <a id="logOutBtn">Выход</a>
+                    <a id="log-out-btn" onclick="logOut()">Выход</a>
                 </li>
             </ul>
         </div>
@@ -42,50 +46,50 @@
                     <div uk-dropdown="mode: click;  pos: bottom-justify; boundary: .boundary-align; boundary-align: true">
                         <ul class="uk-nav uk-dropdown-nav">
                             <li>
-                                <a href="#createAlbum" uk-toggle>Альбом <span uk-icon="icon: folder"></span></a>
-                                <div id="createAlbum" uk-modal>
+                                <a href="#create-album" uk-toggle>Альбом <span uk-icon="icon: folder"></span></a>
+                                <div id="create-album" uk-modal>
                                     <div class="uk-modal-dialog uk-margin-auto-vertical uk-modal-body">
                                         <button class="uk-modal-close-default " type="button" uk-close></button>
                                         <h2 class="uk-modal-title">Создайте новый альбом</h2>
                                         <div class="uk-align-center uk-container-xsmall uk-margin-small-top">
                                             <div class="uk-margin">
                                                 <span>Название</span>
-                                                <input onkeyup="checkTextInput(this, 64, 'createAlbumBtn')" id="newAlbumName" class="uk-input" type="text">
+                                                <input id="new-album-name" onkeyup="checkAlbumCreationModal()" class="uk-input" type="text">
                                             </div>
 
                                             <div class="uk-margin">
                                                 <span>Комментарий</span>
-                                                <input onkeyup="checkTextInput(this, 256, 'createAlbumBtn')" id="newAlbumComment" class="uk-input" type="text">
+                                                <input id="new-album-comment" onkeyup="checkAlbumCreationModal()" class="uk-input" type="text">
                                             </div>
 
                                             <div class="uk-margin">
                                                 <span>Дата удаления</span>
-                                                <input onchange="checkDateInput(this, 'createAlbumBtn')" id="newAlbumDate" class="uk-input" type="date">
+                                                <input id="new-album-end" onchange="checkAlbumCreationModal()" class="uk-input" type="date">
                                             </div>
 
-                                            <button id="createAlbumBtn" disabled onclick="createNewAlbum()" class="uk-button uk-button-primary uk-align-right">Создать</button>
+                                            <button id="create-album-button" disabled onclick="createNewAlbum()" class="uk-button uk-button-primary uk-align-right">Создать</button>
                                         </div>
                                     </div>
                                 </div>
                             </li>
                             <li>
-                                <a href="#createText" uk-toggle>Объявление <span uk-icon="icon: file-text "></span></a>
-                                <div id="createText" uk-modal>
+                                <a href="#create-text" uk-toggle>Объявление <span uk-icon="icon: file-text "></span></a>
+                                <div id="create-text" uk-modal>
                                     <div class="uk-modal-dialog uk-margin-auto-vertical uk-modal-body">
                                         <button class="uk-modal-close-default " type="button" uk-close></button>
                                         <h2 class="uk-modal-title">Создайте новое объявление</h2>
                                         <div class="uk-align-center uk-container-xsmall uk-margin-small-top">
                                             <div class="uk-margin">
                                                 <span>Содержимое</span>
-                                                <textarea onkeyup="checkTextInput(this, 512, 'createTextBtn')" id="newTextContent" class="uk-textarea" style="resize: none;"></textarea>
+                                                <textarea onkeyup="checkTextCreationModel()" id="new-text-content" class="uk-textarea" style="resize: none;"></textarea>
                                             </div>
 
                                             <div class="uk-margin">
                                                 <span>Дата удаления</span>
-                                                <input onchange="checkDateInput(this, 'createTextBtn')" id="newTextDate" class="uk-input" type="date">
+                                                <input onchange="checkTextCreationModel()" id="new-text-end" class="uk-input" type="date">
                                             </div>
 
-                                            <button id="createTextBtn" disabled onclick="createNewText()" class="uk-button uk-button-primary uk-align-right">Созадть</button>
+                                            <button id="create-text-button" disabled onclick="createNewText()" class="uk-button uk-button-primary uk-align-right">Созадть</button>
                                         </div>
                                     </div>
                                 </div>
@@ -108,12 +112,16 @@
 
     <div id="change-object-modal" uk-modal>
         <div class="uk-modal-dialog uk-margin-auto-vertical uk-modal-body">
-            <button class="uk-modal-close-default " type="button" uk-close></button>
+            <button class="uk-modal-close-default" type="button" uk-close></button>
             <div class="uk-margin">
                 <span></span>
             </div>
             <button id="change-object-save-button" class="uk-button uk-button-primary uk-align-right">Сохранить</button>
         </div>
+    </div>
+
+    <div uk-lightbox  style="display: none">
+        <a id="open-lightbox-anchor"></a>
     </div>
 
     <input type="file" multiple id='file-upload' style="display: none;">
