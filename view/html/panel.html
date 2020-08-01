@@ -3,9 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Панель</title>
 </head>
 <body>
-    
+<div class="main">
+    <div id="comment"></div>
+    <div class="container">
+        <div class="media">
+            <img id="img">
+            <video id="vid" onloadstart="this.volume=0" autoplay onended="continueSlideShow()"></video>
+        </div>
+        <div class="rightBlock">
+            <p id="day"></p>
+            <p id="holyday"></p>
+        </div>
+    </div>
+    <div class="marquee" onanimationend="changeAnnouncment()"></div>
+
+    <script src="../static/js/panel.js"></script>
+</div>
 </body>
 </html>

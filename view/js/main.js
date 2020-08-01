@@ -465,6 +465,7 @@ function fillFileDropdown(file, albumId) {
             'Ошибка во время изменения комментария файла', () => showFiles(albumId), params);
     };
     drop.querySelector('.uk-nav>li:nth-child(3) > a:nth-child(1)').onclick = () => {
+        console.log({hide: !file.hide});
         updateObject('file', {hide: !file.hide}, 'Видимость файла изменена',
             'Ошибка во время изменения видимости файла', () => showFiles(albumId), params);
     };
