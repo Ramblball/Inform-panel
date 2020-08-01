@@ -210,6 +210,7 @@ function createChangeInput(changeType, changeKey, prevValue) {
         case 'text':
             changeInput = document.createElement('textarea');
             changeInput.style.resize = 'none';
+            changeInput.setAttribute('rows', 5)
             break;
         case 'end':
             changeInput = document.createElement('input');
@@ -290,7 +291,7 @@ function fillChangeObjectModal(changeType, changeKey, prevValue, baseUrl, okMsg,
             changed = new Date(changed).getTime();
         updateObject(baseUrl, {
             [changeKey]: changed
-        }, okMsg, erMsg, showAlbums, params);
+        }, okMsg, erMsg, finallyFunc, params);
         UIkit.modal(modal).hide();
     };
     UIkit.modal(modal).show();
@@ -411,6 +412,7 @@ function showFiles(albumId) {
 }
 
 function createFileDom(file) {
+    console.log(file)
     let fileDom = document.createElement('div');
     fileDom.setAttribute('id', `file_${file._id}`);
     fileDom.setAttribute('class', 'uk-card uk-card-body');
@@ -425,6 +427,8 @@ function createFileDom(file) {
         fileContentDom.setAttribute('playsinline', '');
     }
     fileContentDom.setAttribute('src', `/static/${file.name}`);
+    if (file.hide)
+        fileContentDom.setAttribute('class', 'file-hidden')
     fileDom.appendChild(fileContentDom);
     fileDom.innerHTML += createFileDropdown(file);
     return fileDom;
@@ -432,7 +436,7 @@ function createFileDom(file) {
 
 function createFileDropdown(file) {
     const markup = `
-        <div uk-dropdown='delay-hide: 100' id='drop_${file._id}'>
+        <div uk-dropdown='delay-hide: 0' id='drop_${file._id}'>
             <ul class='uk-nav uk-dropdown-nav'>
                 <li><a href='#'>Открыть</a></li>
                 <li><a href='#'>Изменить комментарий</a></li>
@@ -456,11 +460,12 @@ function fillFileDropdown(file, albumId) {
         showAnchor.click();
     };
     drop.querySelector('.uk-nav>li:nth-child(2) > a:nth-child(1)').onclick = () => {
-        fillChangeObjectModal('text', 'comment', file['comment'], 'file', 'Комментарий файла изменена',
+        fillChangeObjectModal('text', 'comment',
+            file['comment'] === undefined ? '' : file['comment'], 'file', 'Комментарий файла изменена',
             'Ошибка во время изменения комментария файла', () => showFiles(albumId), params);
     };
     drop.querySelector('.uk-nav>li:nth-child(3) > a:nth-child(1)').onclick = () => {
-        updateObject(file._id, {hide: !file.hide}, 'Видимость файла изменена',
+        updateObject('file', {hide: !file.hide}, 'Видимость файла изменена',
             'Ошибка во время изменения видимости файла', () => showFiles(albumId), params);
     };
     drop.querySelector('.uk-nav>li:nth-child(4)>a:nth-child(1)').onclick = () => {
@@ -553,7 +558,7 @@ function createTextDom(text) {
 
 function createTextDropdown(text) {
     const markup = `
-        <div uk-dropdown id='drop_${text._id}'>
+        <div uk-dropdown='delay-hide: 0' id='drop_${text._id}'>
             <ul class='uk-nav uk-dropdown-nav'>
                 <li><a href='#'>Изменить содержимое</a></li>
                 <li><a href='#'>Изменить дату удаления</a></li>
