@@ -338,7 +338,6 @@ function fillAlbumDropdown(album) {
         input.click();
     };
     let albumParams = {id: album._id};
-    console.log(albumParams);
     drop.querySelector('.uk-nav>li:nth-child(6) > a:nth-child(1)').onclick = () => {
         fillChangeObjectModal('text', 'name', album['name'], 'album', 'Название альбома изменена',
             'Ошибка во время изменения названия альбома', showAlbums, albumParams);
@@ -369,7 +368,6 @@ function uploadFiles(albumId) {
     Array.from(files).forEach(file => {
         formData.append("files", file);
     });
-    console.log(formData);
     fetch(url, {
         method: 'POST',
         body: formData
@@ -412,7 +410,6 @@ function showFiles(albumId) {
 }
 
 function createFileDom(file) {
-    console.log(file)
     let fileDom = document.createElement('div');
     fileDom.setAttribute('id', `file_${file._id}`);
     fileDom.setAttribute('class', 'uk-card uk-card-body');
@@ -423,8 +420,6 @@ function createFileDom(file) {
     } else {
         fileContentDom = document.createElement('video');
         fileContentDom.setAttribute('uk-video', 'autoplay: false');
-        fileContentDom.setAttribute('controls', '');
-        fileContentDom.setAttribute('playsinline', '');
     }
     fileContentDom.setAttribute('src', `/static/${file.name}`);
     if (file.hide)
@@ -465,7 +460,6 @@ function fillFileDropdown(file, albumId) {
             'Ошибка во время изменения комментария файла', () => showFiles(albumId), params);
     };
     drop.querySelector('.uk-nav>li:nth-child(3) > a:nth-child(1)').onclick = () => {
-        console.log({hide: !file.hide});
         updateObject('file', {hide: !file.hide}, 'Видимость файла изменена',
             'Ошибка во время изменения видимости файла', () => showFiles(albumId), params);
     };
