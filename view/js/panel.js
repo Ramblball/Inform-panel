@@ -51,6 +51,7 @@ class AlbumSlideShow {
 
     showAlbum() {
         this.checkCounters();
+        this.placeComment();
         if (!this.currentFileList[this.fileCounter].type)
             this.showVideo();
         else {
@@ -92,6 +93,16 @@ class AlbumSlideShow {
         document.getElementById("img").style.display = imgStl;
         document.getElementById("vid").style.display = vidStl;
     }
+
+    placeComment() {
+        if (this.currentFileList[this.fileCounter].comment !== " ")
+            document.getElementById("comment").textContent = this.currentFileList[this.fileCounter].comment;
+        else if (this.albums[this.albumCounter].comment !== " ")
+            document.getElementById("comment").textContent = this.albums[this.albumCounter].comment;
+        else
+            document.getElementById("comment").textContent = this.albums[this.albumCounter].name;
+    
+    }
 }
 
 class TextMaquee {
@@ -129,7 +140,6 @@ class TextMaquee {
             this.startShow();
             return;
         }
-        console.log(this.marquee)
         this.marquee.style.animation = "none";
         this.marquee.textContent = this.texts[this.textCounter].text;
         this.marquee.style.animation = `${this.marqueeStyle} ${this.calculateSpeed(this.marqueeSpeed)}s`;
