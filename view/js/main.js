@@ -513,7 +513,7 @@ async function getTextsPromise() {
         const res = await fetch('/text');
         return await res.json();
     } catch (er) {
-        return console.log(error);
+        return console.log(er);
     }
 }
 
