@@ -10,7 +10,11 @@ class RecursiveTimer {
     start() {
         let _this = this;
         _this.fn();
-        _this.time = setInterval(_this.fn, _this.countdown);
+        // _this.time = setInterval(_this.fn, _this.countdown);
+        _this.time = setTimeout(function tick() {
+            _this.fn();
+            _this.time = setTimeout(tick, _this.countdown)
+        }, _this.countdown);
     }
 
     stop() {
@@ -105,7 +109,7 @@ class AlbumSlideShow {
     }
 }
 
-class TextMaquee {
+class TextMarquee {
 
     constructor() {
         this.marquee = document.querySelector('.marquee');
@@ -135,7 +139,7 @@ class TextMaquee {
     }
 
     changeText() {
-        if (this.textCounter == this.texts.length) {
+        if (this.textCounter === this.texts.length) {
             this.textCounter = 0;
             this.startShow();
             return;
@@ -147,14 +151,59 @@ class TextMaquee {
     }
     
     calculateSpeed(speed) {
-        return parseInt(this.marquee.offsetWidth / speed + 1);
+        return Math.ceil(this.marquee.offsetWidth / speed);
+    }
+}
+
+class Events {
+    constructor() {
+        this.eventCounter = 0;
+        this.events = [];
+        this.eventTimer = new RecursiveTimer(() => this.displayEvents(), 8000);
+    }
+
+    startShow() {
+        this.setDay();
+        // this.getEventsPromise()
+        //     .then(events => {
+        //         this.events = events;
+        //         this.eventTimer.start();
+        //     });
+    }
+
+    displayEvents() {
+        let event = this.events[this.eventCounter++];
+        document.getElementById("event").textContent = this.parseEvent(event);
+    }
+
+    async getEventsPromise() {
+        try {
+            let res = await fetch('panel/event');
+            return await res.json();
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    parseEvent(event) {
+        return event[1] === '' ? event[0]
+            : `Сегодня день рождение отмечает: ${event[0]} из ${event[1]} класса`;
+    }
+
+    setDay() {
+        let date = new Date();
+        let rusMonths = [
+            "Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"];
+        document.getElementById("day").textContent = date.getDate() + ' ' + rusMonths[date.getMonth()].toUpperCase();
     }
 }
 
 let albumSlide = new AlbumSlideShow();
-let textMarquee = new TextMaquee();
+let textMarquee = new TextMarquee();
+let eventShow = new Events();
 
 document.addEventListener('DOMContentLoaded', () => {
     albumSlide.startShow();
     textMarquee.startShow();
+    eventShow.startShow();
 })
