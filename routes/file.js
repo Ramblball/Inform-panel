@@ -50,7 +50,7 @@ const sendFiles = (req, res, next) => {
 router.get('/', sendFiles);
 
 /**
- * @api {post} /upload Upload files
+ * @api {post} /file/upload Upload files
  * @apiName UploadFiles
  * @apiGroup File
  * 
@@ -103,7 +103,7 @@ router.post('/upload', (req, res, next) => {
                     if (err)
                         next(createError(400, err.errors));
                     else
-                        res.status(200).end();
+                        res.status(201).end();
                 });
             }
         });
@@ -111,7 +111,7 @@ router.post('/upload', (req, res, next) => {
 });
 
 /**
- * @api {put} /update/:aid:fid Update file
+ * @api {put} /file/update/:aid:fid Update file
  * @apiName UpdateFile
  * @apiGroup File
  * 
@@ -157,7 +157,7 @@ router.put('/update', (req, res, next) => {
 }, sendFiles);
 
 /**
- * @api {delete} /remove/:aid:fid Remove file
+ * @api {delete} /file/remove/:aid:fid Remove file
  * @apiName RemoveFile
  * @apiGroup File
  * 

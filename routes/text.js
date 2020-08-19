@@ -7,7 +7,7 @@ const textSender = (req, res, next) => {
         if (err)
             next(createError(500, err));
         else
-            res.status(200).send(texts);
+            res.send(texts);
     });
 }
 
@@ -25,7 +25,7 @@ const textSender = (req, res, next) => {
 router.get('/', textSender);
 
 /**
- * @api {post} /create Create new text
+ * @api {post} /text/create Create new text
  * @apiName CreateText
  * @apiGroup Text
  * 
@@ -35,7 +35,7 @@ router.get('/', textSender);
  * 
  * @apiPermission Autorized
  * 
- * @apiSuccess (200) {Object[]} body Texts array
+ * @apiSuccess (201) {Object[]} body Texts array
  * 
  * @apiError (400) {Number} status Invalid request
  * @apiError (500) {Number} status Server error
@@ -49,13 +49,15 @@ router.post('/create', (req, res, next) => {
     text.save(err => {
         if (err)
             next(err.errors);
-        else
+        else {
+            res.status(201);
             next();
+        }
     });
 }, textSender);
 
 /**
- * @api {put} /update/:id Update text
+ * @api {put} /text/update/:id Update text
  * @apiName UpdateText
  * @apiGroup Text
  * 
@@ -88,7 +90,7 @@ router.put('/update', (req, res, next) => {
 }, textSender);
 
 /**
- * @api {delete} /remove/:id Remove text
+ * @api {delete} /text/remove/:id Remove text
  * @apiName RemoveText
  * @apiGroup Text
  * 
@@ -98,15 +100,12 @@ router.put('/update', (req, res, next) => {
  * 
  * @apiSuccess (200) {Object[]} body Text array
  * 
- * @apiError (404) {Number} status Text not found
  * @apiError (500) {Number} status Server error
 */
 router.delete('/remove', (req, res, next) => {
-    Text.deleteOne({ _id: req.query.id, user: req.user._id }, (err, text) => {
+    Text.deleteOne({ _id: req.query.id, user: req.user._id }, (err, info) => {
         if (err)
-            next(err);
-        else if (!text)
-            next(createError(404));
+            next(createError(500, err));
         else
             next();
     });

@@ -29,7 +29,7 @@ const sendAlbums = (req, res, next) => {
 router.get('/', sendAlbums);
 
 /**
- * @api {post} /create Create new album
+ * @api {post} /album/create Create new album
  * @apiName CreateAlbum
  * @apiGroup Album
  * 
@@ -40,7 +40,7 @@ router.get('/', sendAlbums);
  * 
  * @apiPermission Autorized
  * 
- * @apiSuccess (200) {Object[]} body Albums array
+ * @apiSuccess (201) {Object[]} body Albums array
  * 
  * @apiError (400) {Number} status Invalid request
  * @apiError (500) {Number} status Server error
@@ -54,14 +54,16 @@ router.post('/create', (req, res, next) => {
     album.save(err => {
         if (err)
             next(createError(400, err.errors));
-        else
+        else {
+            res.status(201);
             next();
+        }
     });
 }, sendAlbums);
 
 
 /**
- * @api {put} /update/:id Update album
+ * @api {put} /album/update/:id Update album
  * @apiName UpdateAlbum
  * @apiGroup Album
  * 
@@ -94,7 +96,7 @@ router.put('/update', (req, res, next) => {
 }, sendAlbums);
 
 /**
- * @api {delete} /remove/:id Remove album
+ * @api {delete} /album/remove/:id Remove album
  * @apiName RemoveAlbum
  * @apiGroup Album
  * 

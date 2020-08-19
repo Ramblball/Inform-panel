@@ -20,7 +20,7 @@ const User = require('../models/user');
  * @apiPermission Autorized
  * @apiPermission Admin
  * 
- * @apiSuccess (200) status User created
+ * @apiSuccess (201) status User created
  * 
  * @apiError (400) {Number} status Invalid request
 */
@@ -51,7 +51,7 @@ router.post('/auth', (req, res, next) => {
 		if (err)
 			next(createError(400, err));
 		else
-			res.sendStatus(200);
+			res.sendStatus(201);
 	})
 });
 
@@ -89,12 +89,9 @@ router.post('/login', passport.authenticate('local', {
 }));
 
 /**
-* @api {get} /logout Registrate new user
+* @api {get} /logout Logout user
 * @apiName LogoutUser
 * @apiGroup Auth
-* 
-* @apiParam {String} login
-* @apiParam {String} password
 * 
 * @apiSuccess (302) redirect Redirect to /login
 */
