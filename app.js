@@ -22,7 +22,7 @@ app.use('/static', express.static('public'));
 app.use('/static', express.static('upload'));
 app.use('/api', express.static('doc'));
 
-if (config.util.getEnv('NODE_ENV') === 'dev');
+if (config.util.getEnv('NODE_ENV') === 'dev')
     app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -72,13 +72,19 @@ app.use((req, res, next) => {
 
 // error handler
 app.use((err, req, res, next) => {
-    // set locals, only providing error in development
-    // res.locals.message = err.message;
-    // res.locals.error = req.app.get('env') === 'development' ? err : {};
-    logger.error(err.toString());
-    // render the error page
-    res.status(err.status || 500).send(err);
-    // res.render('error');
+    switch (err.status) {
+        case 404:
+            res.send(404);
+            break;
+        case 500:
+            logger.error(err.toString());
+            res.end();
+            break;
+        default:
+            logger.error(err.toString());
+            res.status(err.status || 500).send(err);
+            break;
+    }
 });
 
 module.exports = app;
