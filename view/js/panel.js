@@ -9,17 +9,12 @@ class RecursiveTimer {
 
     start() {
         let _this = this;
-        _this.fn();
-        // _this.time = setInterval(_this.fn, _this.countdown);
-        _this.time = setTimeout(function tick() {
-            _this.fn();
-            _this.time = setTimeout(tick, _this.countdown)
-        }, _this.countdown);
+        _this.time = setInterval(_this.fn, _this.countdown);
     }
 
     stop() {
         let _this = this;
-        clearTimeout(_this.time);
+        clearInterval(_this.time);
         _this.time = null;
     }
 }
@@ -48,13 +43,13 @@ class AlbumSlideShow {
         this.getAlbumsPromise()
             .then(albums => {
                 this.albums = albums;
+                console.log(albums)
                 this.currentFileList = this.albums[this.albumCounter].file;
                 this.albumTimer.start();
             });
     }
 
     showAlbum() {
-        this.checkCounters();
         this.placeComment();
         if (!this.currentFileList[this.fileCounter].type)
             this.showVideo();
@@ -63,6 +58,7 @@ class AlbumSlideShow {
                 `/static/${this.currentFileList[this.fileCounter].name}`);
             this.fileCounter++;
         }
+        this.checkCounters();
     }
 
     checkCounters() {
@@ -82,8 +78,7 @@ class AlbumSlideShow {
         this.albumTimer.stop();
         this.swapImgVid('none', 'block');
         document.getElementById('img').setAttribute('src', '');
-        document.getElementById('vid').setAttribute('src',
-            `/static/${this.currentFileList[this.fileCounter].name}`);
+        document.getElementById('vid').setAttribute('src', `/static/${this.currentFileList[this.fileCounter].name}`);
     }
 
     continueSlideShow() {
@@ -105,7 +100,6 @@ class AlbumSlideShow {
             document.getElementById("comment").textContent = this.albums[this.albumCounter].comment;
         else
             document.getElementById("comment").textContent = this.albums[this.albumCounter].name;
-    
     }
 }
 
@@ -132,7 +126,6 @@ class TextMarquee {
     startShow() {
         this.getTextsPromise()
             .then(texts => {
-                console.log(texts);
                 this.texts = texts;
                 this.changeText();
             })
@@ -159,26 +152,29 @@ class Events {
     constructor() {
         this.eventCounter = 0;
         this.events = [];
-        this.eventTimer = new RecursiveTimer(() => this.displayEvents(), 8000);
+        this.eventTimer = new RecursiveTimer(() => this.displayEvents(), 2000);
+        this.date = new Date();
     }
 
     startShow() {
         this.setDay();
-        // this.getEventsPromise()
-        //     .then(events => {
-        //         this.events = events;
-        //         this.eventTimer.start();
-        //     });
+        this.getEventsPromise()
+            .then(events => {
+                this.events = events[this.date.getMonth() + 1][this.date.getDate()];
+                this.eventTimer.start();
+            });
     }
 
     displayEvents() {
+        if (this.eventCounter === this.events.length)
+            this.eventCounter = 0;
         let event = this.events[this.eventCounter++];
         document.getElementById("event").textContent = this.parseEvent(event);
     }
 
     async getEventsPromise() {
         try {
-            let res = await fetch('panel/event');
+            let res = await fetch('static/holidays.json');
             return await res.json();
         } catch (e) {
             throw e;
@@ -191,10 +187,9 @@ class Events {
     }
 
     setDay() {
-        let date = new Date();
         let rusMonths = [
             "Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"];
-        document.getElementById("day").textContent = date.getDate() + ' ' + rusMonths[date.getMonth()].toUpperCase();
+        document.getElementById("day").textContent = this.date.getDate() + ' ' + rusMonths[this.date.getMonth()].toUpperCase();
     }
 }
 

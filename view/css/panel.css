@@ -24,7 +24,7 @@
     padding: 0.5%;
 }
 
-#img, #vid { /*  */
+#img, #vid, #media { /*  */
     margin: 0.5%;
     max-height: 99%;
     max-width: 99%;
@@ -47,7 +47,7 @@
 }
 
 
-#holyday {
+#event {
     font-size: 35px;
     text-align: center;
     position: absolute;
@@ -57,10 +57,7 @@
 
 }
 
-
-
 body {
-    padding-top: 1%;
     padding: 2%;
     background: #282b39;
     color: white;
