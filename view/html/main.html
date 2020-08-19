@@ -30,8 +30,36 @@
     </style>
 
     <nav class="uk-navbar-container" uk-navbar>
+
+        <div class="uk-navbar-left">
+            <ul class="uk-navbar-nav">
+                <li>
+                    <a href='/panel'>Панель</a>
+                </li>
+            </ul>
+        </div>
         <div class="uk-navbar-right">
             <ul class="uk-navbar-nav">
+                <li>
+                    <a href="#create-user" uk-toggle>Создать нового пользователя</a>
+                    <div id="create-user" uk-modal>
+                        <div class="uk-modal-dialog uk-margin-auto-vertical uk-modal-body">
+                            <div class="uk-margin">
+                                <h3 class="uk-heading-divider">Создайте нового пользователя</h3>
+                            </div>
+                            <div class="uk-margin">
+                                <input id="new-user-login" onkeypress="checkUserCreationModal()" class="uk-input" type="text">
+                            </div>
+                            <div class="uk-margin">
+                                <input id="new-user-name" onkeypress="checkUserCreationModal()" class="uk-input" type="text">
+                            </div>
+                            <div class="uk-margin">
+                                <input id="new-user-password" onkeypress="checkUserCreationModal()" class="uk-input" type="password">
+                            </div>
+                            <button id="create-user-button" disabled onclick="createNewUser()" class="uk-button uk-button-primary uk-align-right">Создать</button>
+                        </div>
+                    </div>
+                </li>
                 <li>
                     <a id="log-out-btn" onclick="logOut()">Выход</a>
                 </li>

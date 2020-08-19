@@ -85,6 +85,10 @@ function removeObject(baseUrl, params, okMsg, erMsg, finallyFunc) {
         });
 }
 
+function redirectToPanel() {
+    window.location.href = '/panel';
+}
+
 function checkTextInput(id, limit) {
     let inputDom = document.getElementById(id);
     return inputDom.value.length <= limit && inputDom.value.length !== 0;
@@ -94,6 +98,52 @@ function checkDateInput(id) {
     let inputVal = new Date(document.getElementById(id).value).getTime();
     let now = Date.now();
     return inputVal > now;
+}
+
+function checkUserCreationModal() {
+    let userLoginStatus = checkTextInput('new-user-login', 9999);
+    let userNameStatus = checkTextInput('new-user-name', 65);
+    let userPasswordStatus = checkTextInput('new-user-password', 32);
+    let createButton = document.getElementById('create-user-button');
+    if (!(userNameStatus && userPasswordStatus && userLoginStatus)) {
+        createButton.removeAttribute('enabled');
+        createButton.setAttribute('disabled', '');
+    }
+    else {
+        createButton.removeAttribute('disabled');
+        createButton.setAttribute('enabled', '');
+    }
+}
+
+function createNewUser() {
+    let userLogin = document.getElementById('new-user-login').value;
+    let userName = document.getElementById('new-user-name').value.split(' ');
+    let userNameObject = {
+        first: userName[0], last: userName[1]
+    };
+    let userPassword = document.getElementById('new-user-password').value;
+    console.log(
+        {
+            name: userNameObject, password: userPassword, login: userLogin
+        }
+    )
+    fetch('/auth', {
+        method: 'POST',
+        body: JSON.stringify({
+            name: userNameObject, password: userPassword, login: userLogin
+        }),
+        
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(res => {
+            console.log(res);
+        })
+        .catch(er => console.log(er))
+        .finally(res => {
+            UIkit.modal(document.getElementById('create-user')).hide();
+        })
 }
 
 function checkAlbumCreationModal() {
@@ -125,7 +175,7 @@ function createNewAlbum() {
     let albumDate = new Date(document.getElementById('new-album-end').value).getTime();
     fetch('/album/create', {
         method: 'POST',
-        body: JSON.stringify({name: albumName, comment: albumComment, end: albumDate}),
+        body: JSON.stringify({ name: albumName, comment: albumComment, end: albumDate }),
         headers: {
             'Content-Type': 'application/json'
         }
@@ -337,7 +387,7 @@ function fillAlbumDropdown(album) {
         };
         input.click();
     };
-    let albumParams = {id: album._id};
+    let albumParams = { id: album._id };
     drop.querySelector('.uk-nav>li:nth-child(6) > a:nth-child(1)').onclick = () => {
         fillChangeObjectModal('text', 'name', album['name'], 'album', 'Название альбома изменена',
             'Ошибка во время изменения названия альбома', showAlbums, albumParams);
@@ -351,7 +401,7 @@ function fillAlbumDropdown(album) {
             'Ошибка во время изменения даты удаления альбома', showAlbums, albumParams);
     };
     drop.querySelector('.uk-nav>li:nth-child(9) > a:nth-child(1)').onclick = () => {
-        updateObject('album', {hide: !album.hide}, 'Видимость альбома изменена',
+        updateObject('album', { hide: !album.hide }, 'Видимость альбома изменена',
             'Ошибка во время изменения видимости альбома', showAlbums, albumParams);
     };
     drop.querySelector('.uk-nav>li:nth-child(10)>a:nth-child(1)').onclick = () => {
@@ -363,7 +413,7 @@ function fillAlbumDropdown(album) {
 function uploadFiles(albumId) {
     let input = document.getElementById('file-upload');
     let files = input.files;
-    let url = createQueryUrl(`file/upload`, {id: albumId})
+    let url = createQueryUrl(`file/upload`, { id: albumId })
     const formData = new FormData();
     Array.from(files).forEach(file => {
         formData.append("files", file);
@@ -379,7 +429,7 @@ function uploadFiles(albumId) {
 }
 
 async function getFilesPromise(albumId) {
-    let url = createQueryUrl('/file', {aid: albumId})
+    let url = createQueryUrl('/file', { aid: albumId })
     try {
         let res = await fetch(url, {
             method: 'GET'
@@ -448,7 +498,7 @@ function fillFileDropdown(file, albumId) {
     drop.onclick = () => {
         UIkit.dropdown(drop).hide();
     };
-    let params = {aid: albumId, fid: file._id}
+    let params = { aid: albumId, fid: file._id }
     drop.querySelector('.uk-nav>li:nth-child(1) > a:nth-child(1)').onclick = () => {
         let showAnchor = document.getElementById('open-lightbox-anchor');
         showAnchor.setAttribute('href', 'static/' + file.name);
@@ -460,7 +510,7 @@ function fillFileDropdown(file, albumId) {
             'Ошибка во время изменения комментария файла', () => showFiles(albumId), params);
     };
     drop.querySelector('.uk-nav>li:nth-child(3) > a:nth-child(1)').onclick = () => {
-        updateObject('file', {hide: !file.hide}, 'Видимость файла изменена',
+        updateObject('file', { hide: !file.hide }, 'Видимость файла изменена',
             'Ошибка во время изменения видимости файла', () => showFiles(albumId), params);
     };
     drop.querySelector('.uk-nav>li:nth-child(4)>a:nth-child(1)').onclick = () => {
@@ -487,8 +537,8 @@ function createNewText() {
     let textDate = new Date(document.getElementById('new-text-end').value).getTime();
     fetch('text/create', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({text: textContent, end: textDate})
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: textContent, end: textDate })
     }).then(res => {
         if (res.ok) {
             showAlert('uk-alert-primary', 'Объявление создано успешно');
@@ -570,9 +620,9 @@ function fillTextDropdown(text) {
     drop.onclick = () => {
         UIkit.dropdown(drop).hide();
     };
-    let params = {id: text._id}
+    let params = { id: text._id }
     drop.querySelector('.uk-nav>li:nth-child(1) > a:nth-child(1)').onclick = () => {
-        fillChangeObjectModal('textarea', 'text', text['text'], 'text',  'Объявление изменено',
+        fillChangeObjectModal('textarea', 'text', text['text'], 'text', 'Объявление изменено',
             'Ошибка во время изменения объявления', showTexts, params);
     };
     drop.querySelector('.uk-nav>li:nth-child(2) > a:nth-child(1)').onclick = () => {
@@ -580,7 +630,7 @@ function fillTextDropdown(text) {
             'Ошибка во время изменения даты удаления объявления', showTexts, params);
     };
     drop.querySelector('.uk-nav>li:nth-child(3) > a:nth-child(1)').onclick = () => {
-        updateObject('text', {hide: !text.hide},  'Видимость объявления изменена',
+        updateObject('text', { hide: !text.hide }, 'Видимость объявления изменена',
             'Ошибка во время изменения видимости объявления', showTexts, params);
     };
     drop.querySelector('.uk-nav>li:nth-child(4)>a:nth-child(1)').onclick = () => {

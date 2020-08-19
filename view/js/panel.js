@@ -25,7 +25,7 @@ class AlbumSlideShow {
         this.fileCounter = 0;
         let _this = this;
         this.albumTimer = new RecursiveTimer(() => {
-            _this.showAlbum(); }, 2000);
+            _this.showAlbum(); }, 7000);
         this.albums = [];
         this.currentFileList = [];
     }
@@ -152,7 +152,7 @@ class Events {
     constructor() {
         this.eventCounter = 0;
         this.events = [];
-        this.eventTimer = new RecursiveTimer(() => this.displayEvents(), 2000);
+        this.eventTimer = new RecursiveTimer(() => this.displayEvents(), 10000);
         this.date = new Date();
     }
 
