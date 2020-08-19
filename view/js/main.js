@@ -85,10 +85,6 @@ function removeObject(baseUrl, params, okMsg, erMsg, finallyFunc) {
         });
 }
 
-function redirectToPanel() {
-    window.location.href = '/panel';
-}
-
 function checkTextInput(id, limit) {
     let inputDom = document.getElementById(id);
     return inputDom.value.length <= limit && inputDom.value.length !== 0;
