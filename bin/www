@@ -1,31 +1,36 @@
 #!/usr/bin/env node
+process.env.NODE_ENV = 'dev';
 
 /**
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('tv:server');
-var http = require('http');
+const app = require('../app');
+const cronTask = require('../cronTask');
+const debug = require('debug')('tv:server');
+const http = require('http');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+const server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+server.listen(port, () => {
+  cronTask.start();
+  console.log('task started');
+});
 server.on('error', onError);
 server.on('listening', onListening);
 

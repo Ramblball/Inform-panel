@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/panel.css">
+    <title>Панель</title>
+</head>
+<body>
+<div class="main">
+    <div id="comment"></div>
+    <div class="container">
+        <div class="media">
+           <img id="img">
+           <video id="vid" onloadstart="this.volume=0" autoplay onended="albumSlide.continueSlideShow()"></video>
+            <!-- <iframe id="media" all></iframe> -->
+        </div>
+        <div class="rightBlock">
+            <p id="day"></p>
+            <p id="event"></p>
+        </div>
+    </div>
+   <div class="marquee" onanimationend="textMarquee.changeText()"></div>
+
+    <script src="/static/js/panel.js"></script>
+</div>
+</body>
+</html>

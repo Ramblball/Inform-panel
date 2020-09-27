@@ -63,5 +63,12 @@ typings/
 # webstorm ifno
 .idea
 
-# package-lock
+# project configurations
 package-lock.json
+config/
+
+# uploaded files
+upload/
+
+#web-api
+doc/
